@@ -1,9 +1,13 @@
 package com.lu.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class Cluster {
+    @JsonProperty("cluster_name")
     private String clusterName;
+    @JsonProperty("bootstrap_server")
     private List<String> bootstrapServer;
 
     public Cluster() {

@@ -1,6 +1,7 @@
 package com.lu.controller;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lu.model.Cluster;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -38,7 +40,8 @@ public class MainController implements Initializable {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Cluster> clusterList = null;
         try {
-            clusterList = objectMapper.readValue(Paths.get(this.getClass().getResource("/data.json").toString()).toFile(), List.class);
+            clusterList = objectMapper.readValue(this.getClass().getResource("/data.json"),
+                    new TypeReference<List<Cluster>>() {});
         } catch (JsonParseException e) {
             e.printStackTrace();
         } catch (JsonMappingException e) {

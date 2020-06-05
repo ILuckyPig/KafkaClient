@@ -2,5 +2,9 @@
   {
     "cluster_name": "kafka-dev",
     "bootstrap_server": ["192.168.8.50:9092"]
+  },
+  {
+    "cluster_name": "kafka-test",
+    "bootstrap_server": ["192.168.8.50:9092","192.168.8.55:9092"]
   }
 ]

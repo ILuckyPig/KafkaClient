@@ -1,5 +1,10 @@
 package com.lu.controller;
 
-public class AddNewClusterController {
+import java.awt.event.ActionEvent;
 
+public class AddNewClusterController {
+    // TODO 保存cluster->data.json
+    public void saveNewCluster(ActionEvent event) {
+
+    }
 }
