@@ -1,0 +1,6 @@
+[
+  {
+    "cluster_name": "kafka-dev",
+    "bootstrap_server": ["192.168.8.50:9092"]
+  }
+]
