@@ -3,8 +3,8 @@ package com.lu.controller;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lu.model.Cluster;
+import com.lu.util.JsonUtil;
 import com.lu.view.ClusterListCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,10 +20,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -33,15 +31,14 @@ public class MainController implements Initializable {
     @FXML
     private Button addNewClusterButton;
     private ObservableList<Cluster> observableList;
+    public static List<Cluster> clusterList = new ArrayList<>();
 
     public MainController() {
         observableList = FXCollections.observableArrayList();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<Cluster> clusterList = null;
         try {
-            clusterList = objectMapper.readValue(this.getClass().getResource("/data.json"),
-                    new TypeReference<List<Cluster>>() {});
+            clusterList.addAll(JsonUtil.objectMapper.readValue(this.getClass().getResource("/data.json"),
+                    new TypeReference<List<Cluster>>() {}));
         } catch (JsonParseException e) {
             e.printStackTrace();
         } catch (JsonMappingException e) {
