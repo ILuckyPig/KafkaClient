@@ -1,5 +1,6 @@
 package com.lu.controller;
 
+import com.lu.Context;
 import com.lu.model.Cluster;
 import com.lu.util.JsonUtil;
 import javafx.event.ActionEvent;
@@ -15,7 +16,7 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 
-public class AddNewClusterController {
+public class AddNewClusterController extends RootController {
     @FXML
     TextField clusterNameTextField;
     @FXML
@@ -23,15 +24,23 @@ public class AddNewClusterController {
     @FXML
     Button saveButton;
 
+    /**
+     * 保存新集群
+     *
+     * @param event
+     */
     public void saveNewCluster(ActionEvent event) {
         String clusterName = clusterNameTextField.getText();
         String bootstrapServer = bootstrapServerTextField.getText();
         List<String> split = Arrays.asList(bootstrapServer.split(","));
         Cluster newCluster = new Cluster(clusterName, split);
-        MainController.clusterList.add(newCluster);
+
+        MainController mainController = Context.getController(MainController.class);
+        mainController.saveNewCluster2List(newCluster);
+
         try {
             Writer writer = new FileWriter(new File(this.getClass().getResource("/data.json").getFile()));
-            JsonUtil.objectMapper.writeValue(writer, MainController.clusterList);
+            JsonUtil.objectMapper.writeValue(writer, mainController.observableList);
         } catch (IOException e) {
             e.printStackTrace();
         }

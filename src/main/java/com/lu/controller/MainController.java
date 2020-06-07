@@ -21,23 +21,20 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class MainController implements Initializable {
+public class MainController extends RootController implements Initializable {
     @FXML
-    private ListView<Cluster> clusterListView;
+    public ListView<Cluster> clusterListView;
     @FXML
     private Button addNewClusterButton;
-    private ObservableList<Cluster> observableList;
-    public static List<Cluster> clusterList = new ArrayList<>();
+    public ObservableList<Cluster> observableList;
 
     public MainController() {
         observableList = FXCollections.observableArrayList();
-
         try {
-            clusterList.addAll(JsonUtil.objectMapper.readValue(this.getClass().getResource("/data.json"),
+            observableList.addAll(JsonUtil.objectMapper.readValue(this.getClass().getResource("/data.json"),
                     new TypeReference<List<Cluster>>() {}));
         } catch (JsonParseException e) {
             e.printStackTrace();
@@ -46,7 +43,6 @@ public class MainController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        observableList.addAll(clusterList);
     }
 
     @Override
@@ -55,7 +51,12 @@ public class MainController implements Initializable {
         clusterListView.setCellFactory(clusterList -> new ClusterListCell());
     }
 
-    public void addNewCluster(ActionEvent event) {
+    /**
+     * 显示添加新集群界面
+     *
+     * @param event
+     */
+    public void drawAddNewCluster(ActionEvent event) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/AddNewClusterFxml.fxml"));
             Parent root = fxmlLoader.load();
@@ -66,5 +67,14 @@ public class MainController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 向主界面集群列表添加新集群
+     *
+     * @param newCluster
+     */
+    public void saveNewCluster2List(Cluster newCluster) {
+        observableList.add(newCluster);
     }
 }
