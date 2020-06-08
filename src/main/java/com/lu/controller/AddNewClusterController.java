@@ -3,6 +3,7 @@ package com.lu.controller;
 import com.lu.Context;
 import com.lu.model.Cluster;
 import com.lu.util.JsonUtil;
+import com.lu.util.KafkaUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -46,5 +47,16 @@ public class AddNewClusterController extends RootController {
         }
 
         ((Stage) saveButton.getScene().getWindow()).close();
+    }
+
+    /**
+     * 测试是否可以连接
+     *
+     * @param event
+     */
+    public void testConnectivity(ActionEvent event) {
+        String text = bootstrapServerTextField.getText();
+        boolean flag = KafkaUtil.testConnectivity(text);
+        // TODO connect msg gui
     }
 }
