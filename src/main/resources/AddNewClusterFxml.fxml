@@ -32,12 +32,12 @@
         </Label>
         <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
             <children>
-            <Label>
-               <HBox.margin>
-                  <Insets right="4.0" />
-               </HBox.margin>
-            </Label>
-                <Button mnemonicParsing="false" text="Test Connectivity">
+                <Label fx:id="testLabel" visible="false">
+                    <HBox.margin>
+                        <Insets right="4.0" />
+                    </HBox.margin>
+                </Label>
+                <Button mnemonicParsing="false" onAction="#testConnectivity" text="Test Connectivity">
                     <HBox.margin>
                         <Insets right="4.0" />
                     </HBox.margin>

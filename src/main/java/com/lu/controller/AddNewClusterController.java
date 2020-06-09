@@ -7,6 +7,7 @@ import com.lu.util.KafkaUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -24,6 +25,8 @@ public class AddNewClusterController extends RootController {
     TextField bootstrapServerTextField;
     @FXML
     Button saveButton;
+    @FXML
+    Label testLabel;
 
     /**
      * 保存新集群
@@ -57,6 +60,11 @@ public class AddNewClusterController extends RootController {
     public void testConnectivity(ActionEvent event) {
         String text = bootstrapServerTextField.getText();
         boolean flag = KafkaUtil.testConnectivity(text);
-        // TODO connect msg gui
+        if (flag) {
+            testLabel.setText("connection success");
+        } else {
+            testLabel.setText("connection failed");
+        }
+        testLabel.setVisible(true);
     }
 }
