@@ -16,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -76,5 +77,17 @@ public class MainController extends RootController implements Initializable {
      */
     public void saveNewCluster2List(Cluster newCluster) {
         observableList.add(newCluster);
+    }
+
+    public void openCluster(MouseEvent event) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/ClusterFxml.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
