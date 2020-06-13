@@ -3,7 +3,6 @@ package com.lu.controller;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.lu.Context;
 import com.lu.model.Cluster;
 import com.lu.util.JsonUtil;
 import com.lu.view.ClusterListCell;
@@ -17,7 +16,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -50,14 +48,7 @@ public class MainController extends RootController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         clusterListView.setItems(observableList);
-        clusterListView.setOnMouseClicked(this::openClusterMain);
-        clusterListView.setCellFactory(clusterList -> {
-            ClusterListCell clusterListCell = new ClusterListCell();
-            clusterListCell.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-                clusterList.getSelectionModel().clearSelection();
-            });
-            return clusterListCell;
-        });
+        clusterListView.setCellFactory(clusterList -> new ClusterListCell());
     }
 
     /**
@@ -85,26 +76,5 @@ public class MainController extends RootController implements Initializable {
      */
     public void saveNewCluster2List(Cluster newCluster) {
         observableList.add(newCluster);
-    }
-
-    /**
-     * 打开集群界面
-     *
-     * @param event
-     */
-    public void openClusterMain(MouseEvent event) {
-        try {
-            Cluster cluster = clusterListView.getSelectionModel().getSelectedItem();
-            FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/ClusterMainFxml.fxml"));
-            Parent root = fxmlLoader.load();
-            ClusterMainController clusterMainController = Context.getController(ClusterMainController.class);
-            clusterMainController.clusterNameLabel.setText(cluster.getClusterName());
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 }
