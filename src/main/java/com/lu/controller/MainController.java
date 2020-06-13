@@ -105,6 +105,5 @@ public class MainController extends RootController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
