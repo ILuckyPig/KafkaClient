@@ -29,4 +29,16 @@ public class KafkaUtil {
             return false;
         }
     }
+
+    /**
+     * 获得kafka admin client
+     *
+     * @param bootstrapServer
+     * @return
+     */
+    public static AdminClient getAdminClient(String bootstrapServer) {
+        Properties properties = new Properties();
+        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        return KafkaAdminClient.create(properties);
+    }
 }
