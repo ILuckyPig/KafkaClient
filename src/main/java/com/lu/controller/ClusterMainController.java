@@ -10,8 +10,8 @@ import org.apache.kafka.clients.admin.AdminClient;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 public class ClusterMainController extends RootController implements Initializable {
     @FXML
@@ -26,15 +26,9 @@ public class ClusterMainController extends RootController implements Initializab
         adminClient = KafkaUtil.getAdminClient(bootstrapServers);
 
         try {
-            // TODO build topic
-            List<Topic> topicList = adminClient.listTopics().names().get()
-                    .stream()
-                    .map(name -> {
-                        Topic topic = new Topic();
-                        topic.setTopicName(name);
-                        return topic;
-                    })
-                    .collect(Collectors.toList());
+            // TODO init table view
+            Set<String> topics = adminClient.listTopics().names().get();
+            List<Topic> topicList = KafkaUtil.getTopics(adminClient, topics);
 
 
         } catch (InterruptedException e) {

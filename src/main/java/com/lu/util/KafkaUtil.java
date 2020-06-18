@@ -53,7 +53,7 @@ public class KafkaUtil {
      * @param topics
      * @return
      */
-    public static List<Topic> getTopicsPartitions(AdminClient adminClient, List<String> topics) {
+    public static List<Topic> getTopicsPartitions(AdminClient adminClient, Set<String> topics) {
         try {
             Collection<TopicDescription> topicDescriptions = adminClient.describeTopics(topics).all().get().values();
             return topicDescriptions
@@ -77,7 +77,7 @@ public class KafkaUtil {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public static List<Topic> getTopics(AdminClient adminClient, List<String> topics) {
+    public static List<Topic> getTopics(AdminClient adminClient, Set<String> topics) {
         try {
             List<Topic> topicList = new ArrayList<>();
             Collection<TopicDescription> topicDescriptions = adminClient.describeTopics(topics).all().get().values();

@@ -57,4 +57,5 @@
             </HBox.margin>
         </Button>
     </HBox>
+   <HBox prefHeight="100.0" prefWidth="200.0" />
 </GridPane>
