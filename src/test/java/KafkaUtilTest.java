@@ -1,8 +1,11 @@
 import com.lu.util.KafkaUtil;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.TopicDescription;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 public class KafkaUtilTest {
@@ -19,5 +22,14 @@ public class KafkaUtilTest {
         AdminClient adminClient = KafkaUtil.getAdminClient("192.168.8.50:9092");
         adminClient.listTopics().names().get().forEach(System.out::println);
         Assert.assertNotNull(adminClient);
+    }
+
+    @Test
+    public void testGetTopicsConfig() throws ExecutionException, InterruptedException {
+        AdminClient adminClient = KafkaUtil.getAdminClient("192.168.8.50:9092");
+        Collection<TopicDescription> topicDescriptions = adminClient.describeTopics(Collections.singleton("xhs_user")).all().get().values();
+        for (TopicDescription topicDescription : topicDescriptions) {
+            System.out.println(topicDescription.name() + "," + topicDescription.partitions().size());
+        }
     }
 }
