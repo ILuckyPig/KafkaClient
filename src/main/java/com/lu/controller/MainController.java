@@ -97,8 +97,8 @@ public class MainController extends RootController implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/ClusterMainFxml.fxml"));
             Parent root = fxmlLoader.load();
             ClusterMainController clusterMainController = fxmlLoader.getController();
+            clusterMainController.setCluster(cluster);
             clusterMainController.getClusterNameLabel().setText(cluster.getClusterName());
-            clusterMainController.getTopicController().init(cluster.getBootstrapServer());
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.show();
