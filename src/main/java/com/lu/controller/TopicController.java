@@ -42,7 +42,7 @@ public class TopicController extends RootController {
 
         try {
             Set<String> topics = adminClient.listTopics().names().get();
-            List<Topic> topicList = KafkaUtil.getTopics(adminClient, topics);
+            List<Topic> topicList = KafkaUtil.getTopicRfAndPartitions(adminClient, topics);
             buildTableView(topicList);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();

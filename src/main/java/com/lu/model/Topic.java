@@ -58,4 +58,15 @@ public class Topic {
     public void setConsumerCount(Integer consumerCount) {
         this.consumerCount = consumerCount;
     }
+
+    @Override
+    public String toString() {
+        return "Topic{" +
+                "topicName='" + topicName + '\'' +
+                ", replicationFactor=" + replicationFactor +
+                ", partitions=" + partitions +
+                ", messageCount=" + messageCount +
+                ", consumerCount=" + consumerCount +
+                '}';
+    }
 }

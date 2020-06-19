@@ -1,16 +1,15 @@
 package com.lu.util;
 
 import com.lu.model.Topic;
-import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.KafkaAdminClient;
+import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.common.Node;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.TopicPartitionInfo;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class KafkaUtil {
     /**
@@ -47,57 +46,21 @@ public class KafkaUtil {
     }
 
     /**
-     * 获得topic partitions
+     * 获得topics的replication for和partitions
      *
      * @param adminClient
      * @param topics
      * @return
      */
-    public static List<Topic> getTopicsPartitions(AdminClient adminClient, Set<String> topics) {
-        try {
-            Collection<TopicDescription> topicDescriptions = adminClient.describeTopics(topics).all().get().values();
-            return topicDescriptions
-                    .stream()
-                    .map(topicDescription -> new Topic(topicDescription.name(), 0, topicDescription.partitions().size(), 0, 0))
-                    .collect(Collectors.toList());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * 获得指定topic的config
-     *
-     * @param adminClient
-     * @param topics
-     * @return
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
-    public static List<Topic> getTopics(AdminClient adminClient, Set<String> topics) {
+    public static List<Topic> getTopicRfAndPartitions(AdminClient adminClient, Set<String> topics) {
         try {
             List<Topic> topicList = new ArrayList<>();
             Collection<TopicDescription> topicDescriptions = adminClient.describeTopics(topics).all().get().values();
-            Set<TopicPartition> topicPartitions = topicDescriptions.stream()
-                    .flatMap(topicDescription -> topicDescription.partitions().stream()
-                            .map(p -> new TopicPartition(topicDescription.name(), p.partition()))
-                    ).collect(Collectors.toSet());
-
-            // Map<TopicPartition, PartitionReassignment> partitionReassignmentMap = adminClient
-            //         .listPartitionReassignments(topicPartitions, new ListPartitionReassignmentsOptions())
-            //         .reassignments()
-            //         .get();
-
             for (TopicDescription topicDescription : topicDescriptions) {
                 String name = topicDescription.name();
                 int partitions = topicDescription.partitions().size();
-                // TopicPartitionInfo firstPartition = topicDescription.partitions().iterator().next();
-                // PartitionReassignment reassignment = partitionReassignmentMap.get(new TopicPartition(topicDescription.name(), firstPartition.partition()));
-                // int replicationFactor = getReplicationFactor(firstPartition, reassignment);
-                Topic topic = new Topic(name, 0, partitions,0,0);
+                int replicationFactor = topicDescription.partitions().iterator().next().replicas().size();
+                Topic topic = new Topic(name, replicationFactor, partitions,0,0);
                 topicList.add(topic);
             }
             return topicList;
@@ -107,19 +70,5 @@ public class KafkaUtil {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static int getReplicationFactor(TopicPartitionInfo firstPartition, PartitionReassignment reassignment) {
-        Set<Integer> allReplicaIds = firstPartition.replicas().stream().map(Node::id).collect(Collectors.toSet());
-        Set<Integer> changingReplicaIds = new HashSet<>();
-        changingReplicaIds.addAll(reassignment.removingReplicas());
-        changingReplicaIds.addAll(reassignment.addingReplicas());
-
-        if (allReplicaIds.retainAll(changingReplicaIds)) {
-            reassignment.replicas().removeAll(reassignment.addingReplicas());
-            return reassignment.replicas().size();
-        } else {
-            return firstPartition.replicas().size();
-        }
     }
 }
