@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane prefWidth="1000.0" fx:controller="com.lu.controller.TopicController"
+<GridPane fx:id="topic" prefWidth="1000.0" fx:controller="com.lu.controller.TopicController"
           xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES"/>

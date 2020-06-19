@@ -9,10 +9,6 @@ public class ClusterMainController extends RootController {
     @FXML
     private TopicController topicController;
 
-    public ClusterMainController() {
-        topicController = new TopicController();
-    }
-
     public Label getClusterNameLabel() {
         return clusterNameLabel;
     }

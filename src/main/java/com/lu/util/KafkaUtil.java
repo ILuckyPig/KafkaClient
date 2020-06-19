@@ -100,7 +100,7 @@ public class KafkaUtil {
                 Topic topic = new Topic(name, 0, partitions,0,0);
                 topicList.add(topic);
             }
-
+            return topicList;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

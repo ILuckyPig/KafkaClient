@@ -5,19 +5,16 @@ import com.lu.util.KafkaUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.kafka.clients.admin.AdminClient;
 
-import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-public class TopicController extends RootController implements Initializable {
+public class TopicController extends RootController {
     @FXML
     TableView tableView;
     @FXML
@@ -30,12 +27,15 @@ public class TopicController extends RootController implements Initializable {
     TableColumn countColumn;
     @FXML
     TableColumn consumerColumn;
-    List<String> bootstrapServerList;
     AdminClient adminClient;
     ObservableList<Topic> topicList;
-    // TODO 如何初始化内部controller的数据
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+    /**
+     * 初始化表格数据
+     *
+     * @param bootstrapServerList
+     */
+    public void init(List<String> bootstrapServerList) {
         topicList = FXCollections.observableArrayList();
         String bootstrapServers = String.join(",", bootstrapServerList);
         adminClient = KafkaUtil.getAdminClient(bootstrapServers);
@@ -49,6 +49,11 @@ public class TopicController extends RootController implements Initializable {
         }
     }
 
+    /**
+     * 构建表格数据
+     *
+     * @param topics
+     */
     public void buildTableView(List<Topic> topics) {
         topicNameColumn.setCellValueFactory(new PropertyValueFactory<>("topicName"));
         rfColumn.setCellValueFactory(new PropertyValueFactory<>("replicationFactor"));
@@ -57,14 +62,6 @@ public class TopicController extends RootController implements Initializable {
         consumerColumn.setCellValueFactory(new PropertyValueFactory<>("consumerCount"));
         topicList.addAll(topics);
         tableView.setItems(topicList);
-    }
-
-    public List<String> getBootstrapServerList() {
-        return bootstrapServerList;
-    }
-
-    public void setBootstrapServerList(List<String> bootstrapServerList) {
-        this.bootstrapServerList = bootstrapServerList;
     }
 
     public AdminClient getAdminClient() {
