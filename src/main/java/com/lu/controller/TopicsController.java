@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-public class TopicController extends RootController {
+public class TopicsController extends RootController {
     @FXML
     TableView tableView;
     @FXML
@@ -33,13 +33,9 @@ public class TopicController extends RootController {
     /**
      * 初始化表格数据
      *
-     * @param bootstrapServerList
      */
-    public void init(List<String> bootstrapServerList) {
+    public void init() {
         topicList = FXCollections.observableArrayList();
-        String bootstrapServers = String.join(",", bootstrapServerList);
-        adminClient = KafkaUtil.getAdminClient(bootstrapServers);
-
         try {
             Set<String> topics = adminClient.listTopics().names().get();
             List<Topic> topicList = KafkaUtil.getTopicRfAndPartitions(adminClient, topics);

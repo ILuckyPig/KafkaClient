@@ -1,15 +1,14 @@
 package com.lu.util;
 
 import com.lu.model.Topic;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.KafkaAdminClient;
-import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 public class KafkaUtil {
     /**
@@ -67,6 +66,30 @@ public class KafkaUtil {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 获得所有consumer group
+     *
+     * @param adminClient
+     * @return
+     */
+    public static List<String> getConsumers(AdminClient adminClient) {
+        try {
+            return adminClient.listConsumerGroups()
+                    .valid()
+                    .get(10, TimeUnit.SECONDS)
+                    .stream()
+                    .map(ConsumerGroupListing::groupId)
+                    .collect(Collectors.toList());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
             e.printStackTrace();
         }
         return null;
