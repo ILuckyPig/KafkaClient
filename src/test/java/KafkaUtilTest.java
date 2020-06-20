@@ -44,4 +44,12 @@ public class KafkaUtilTest {
             System.out.println(topic);
         }
     }
+
+    @Test
+    public void testGetConsumers() {
+        AdminClient adminClient = KafkaUtil.getAdminClient("192.168.8.50:9092");
+        List<String> consumers = KafkaUtil.getConsumers(adminClient);
+        consumers.forEach(System.out::println);
+        Assert.assertNotNull(consumers);
+    }
 }

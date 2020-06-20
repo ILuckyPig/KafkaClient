@@ -58,6 +58,8 @@ public class ClusterMainController extends RootController {
                 FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/ConsumersFxml.fxml"));
                 Parent root = fxmlLoader.load();
                 consumersController = fxmlLoader.getController();
+                consumersController.setAdminClient(adminClient);
+                consumersController.init();
                 tableGridPane.add(root, 1, 0);
             } catch (IOException e) {
                 e.printStackTrace();

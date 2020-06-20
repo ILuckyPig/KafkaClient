@@ -16,17 +16,17 @@ import java.util.concurrent.ExecutionException;
 
 public class TopicsController extends RootController {
     @FXML
-    TableView tableView;
+    TableView<Topic> tableView;
     @FXML
-    TableColumn topicNameColumn;
+    TableColumn<Topic, String> topicNameColumn;
     @FXML
-    TableColumn rfColumn;
+    TableColumn<Topic, Integer> rfColumn;
     @FXML
-    TableColumn partitionsColumn;
+    TableColumn<Topic, Integer> partitionsColumn;
     @FXML
-    TableColumn countColumn;
+    TableColumn<Topic, Integer> countColumn;
     @FXML
-    TableColumn consumerColumn;
+    TableColumn<Topic, Integer> consumerColumn;
     AdminClient adminClient;
     ObservableList<Topic> topicList;
 
