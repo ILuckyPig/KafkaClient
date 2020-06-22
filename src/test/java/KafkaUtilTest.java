@@ -10,8 +10,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 public class KafkaUtilTest {
+    AdminClient adminClient;
+
+    public KafkaUtilTest() {
+        adminClient = KafkaUtil.getAdminClient("192.168.8.50:9092");
+    }
 
     @Test
     public void testTestConnectivity() {
@@ -51,5 +57,10 @@ public class KafkaUtilTest {
         List<String> consumers = KafkaUtil.getConsumers(adminClient);
         consumers.forEach(System.out::println);
         Assert.assertNotNull(consumers);
+    }
+
+    @Test
+    public void testGetConsumerDescription() throws InterruptedException, ExecutionException, TimeoutException {
+        KafkaUtil.getConsumerDescription(adminClient, "mbase-spider-parser-dev");
     }
 }

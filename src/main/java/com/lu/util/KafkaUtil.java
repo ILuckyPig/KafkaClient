@@ -3,6 +3,9 @@ package com.lu.util;
 import com.lu.model.Topic;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.ConsumerGroupState;
+import org.apache.kafka.common.TopicPartition;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -93,5 +96,19 @@ public class KafkaUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void getConsumerDescription(AdminClient adminClient, String groupId) throws InterruptedException, ExecutionException, TimeoutException {
+        // TODO get Consumer Lag
+        Map<String, ConsumerGroupDescription> consumerGroups = adminClient.describeConsumerGroups(Collections.singleton(groupId))
+                .all()
+                .get(10, TimeUnit.SECONDS);
+
+        ConsumerGroupDescription consumerGroupDescription = consumerGroups.get(groupId);
+        ConsumerGroupState state = consumerGroupDescription.state();
+
+        Map<TopicPartition, OffsetAndMetadata> offsetAndMetadataMap = adminClient.listConsumerGroupOffsets(groupId)
+                .partitionsToOffsetAndMetadata()
+                .get(10, TimeUnit.SECONDS);
     }
 }
