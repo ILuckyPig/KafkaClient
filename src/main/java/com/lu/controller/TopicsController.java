@@ -16,19 +16,19 @@ import java.util.concurrent.ExecutionException;
 
 public class TopicsController extends RootController {
     @FXML
-    TableView<Topic> tableView;
+    private TableView<Topic> tableView;
     @FXML
-    TableColumn<Topic, String> topicNameColumn;
+    private TableColumn<Topic, String> topicNameColumn;
     @FXML
-    TableColumn<Topic, Integer> rfColumn;
+    private TableColumn<Topic, Integer> rfColumn;
     @FXML
-    TableColumn<Topic, Integer> partitionsColumn;
+    private TableColumn<Topic, Integer> partitionsColumn;
     @FXML
-    TableColumn<Topic, Integer> countColumn;
+    private TableColumn<Topic, Integer> countColumn;
     @FXML
-    TableColumn<Topic, Integer> consumerColumn;
-    AdminClient adminClient;
-    ObservableList<Topic> topicList;
+    private TableColumn<Topic, Integer> consumerColumn;
+    private AdminClient adminClient;
+    private ObservableList<Topic> topicList;
 
     /**
      * 初始化表格数据
@@ -60,11 +60,35 @@ public class TopicsController extends RootController {
         tableView.setItems(topicList);
     }
 
+    /**
+     * 刷新topic列表
+     */
+    public void refresh() {
+        try {
+            Set<String> topics = adminClient.listTopics().names().get();
+            List<Topic> topicList = KafkaUtil.getTopicRfAndPartitions(adminClient, topics);
+            topicList.clear();
+            topicList.addAll(topicList);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
     public AdminClient getAdminClient() {
         return adminClient;
     }
 
     public void setAdminClient(AdminClient adminClient) {
         this.adminClient = adminClient;
+    }
+
+    public ObservableList<Topic> getTopicList() {
+        return topicList;
+    }
+
+    public void setTopicList(ObservableList<Topic> topicList) {
+        this.topicList = topicList;
     }
 }

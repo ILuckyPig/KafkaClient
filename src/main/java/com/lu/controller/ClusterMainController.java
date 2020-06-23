@@ -130,7 +130,7 @@ public class ClusterMainController extends RootController {
     // TODO refresh button click event
     public void clickRefresh(MouseEvent mouseEvent) {
         if (topicsGridPane.visibleProperty().get()) {
-
+            topicsController.refresh();
             return;
         }
 
