@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <GridPane fx:id="topics" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-          xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lu.controller.TopicsController">
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lu.controller.ConsumerController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES"/>
     </columnConstraints>
@@ -14,9 +14,9 @@
     </rowConstraints>
     <TableView fx:id="tableView" GridPane.rowIndex="1">
         <columns>
-            <TableColumn fx:id="topicNameColumn" prefWidth="300.0" text="Topic - Partition"/>
-            <TableColumn fx:id="rfColumn" prefWidth="75.0" text="Lag"/>
-            <TableColumn fx:id="partitionsColumn" prefWidth="75.0" text="End - Current"/>
+            <TableColumn fx:id="partitionColumn" prefWidth="300.0" text="Topic - Partition"/>
+            <TableColumn fx:id="lagColumn" prefWidth="75.0" text="Lag"/>
+            <TableColumn fx:id="endCurrentColumn" prefWidth="75.0" text="End - Current"/>
         </columns>
     </TableView>
     <GridPane>
@@ -29,22 +29,20 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
         </rowConstraints>
-        <children>
-            <Label text="Label"/>
-            <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="1">
-                <GridPane.margin>
-                    <Insets right="4.0"/>
-                </GridPane.margin>
-            </Button>
-            <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                <GridPane.margin>
-                    <Insets right="4.0"/>
-                </GridPane.margin>
-            </Button>
-        </children>
         <GridPane.margin>
             <Insets bottom="10.0"/>
         </GridPane.margin>
+        <Label text="Label"/>
+        <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="1">
+            <GridPane.margin>
+                <Insets right="4.0"/>
+            </GridPane.margin>
+        </Button>
+        <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <GridPane.margin>
+                <Insets right="4.0"/>
+            </GridPane.margin>
+        </Button>
     </GridPane>
     <padding>
         <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>

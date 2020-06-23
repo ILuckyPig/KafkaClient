@@ -40,7 +40,7 @@
                    onMouseClicked="#clickTopics" text="Topics" GridPane.halignment="CENTER" GridPane.rowIndex="1"
                    GridPane.valignment="CENTER"/>
             <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                   onMouseClicked="#clickConsumers" text="Consumers" GridPane.halignment="CENTER" GridPane.rowIndex="2"
+                   onMouseClicked="#clickConsumerList" text="Consumers" GridPane.halignment="CENTER" GridPane.rowIndex="2"
                    GridPane.valignment="CENTER"/>
             <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="3"/>
         </GridPane>
