@@ -1,10 +1,11 @@
 package com.lu.util;
 
+import com.lu.model.PartitionOffsetAndLag;
 import com.lu.model.Topic;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.common.ConsumerGroupState;
 import org.apache.kafka.common.TopicPartition;
 
 import java.util.*;
@@ -47,6 +48,15 @@ public class KafkaUtil {
         return KafkaAdminClient.create(properties);
     }
 
+    public static KafkaConsumer getConsumer(String groupId, String bootstrapServer, String keyDeserializer, String valueDeserializer) {
+        Properties properties = new Properties();
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);
+        return new KafkaConsumer<>(properties);
+    }
+
     /**
      * 获得topics的replication for和partitions
      *
@@ -62,7 +72,7 @@ public class KafkaUtil {
                 String name = topicDescription.name();
                 int partitions = topicDescription.partitions().size();
                 int replicationFactor = topicDescription.partitions().iterator().next().replicas().size();
-                Topic topic = new Topic(name, replicationFactor, partitions,0,0);
+                Topic topic = new Topic(name, replicationFactor, partitions, 0, 0);
                 topicList.add(topic);
             }
             return topicList;
@@ -80,7 +90,7 @@ public class KafkaUtil {
      * @param adminClient
      * @return
      */
-    public static List<String> getConsumers(AdminClient adminClient) {
+    public static List<String> getConsumerGroups(AdminClient adminClient) {
         try {
             return adminClient.listConsumerGroups()
                     .valid()
@@ -98,17 +108,36 @@ public class KafkaUtil {
         return null;
     }
 
-    public static void getConsumerDescription(AdminClient adminClient, String groupId) throws InterruptedException, ExecutionException, TimeoutException {
-        // TODO get Consumer Lag
-        Map<String, ConsumerGroupDescription> consumerGroups = adminClient.describeConsumerGroups(Collections.singleton(groupId))
-                .all()
-                .get(10, TimeUnit.SECONDS);
+    /**
+     * 获得consumer lag
+     *
+     * @param adminClient
+     * @param consumer
+     * @param groupId
+     * @return
+     */
+    public static List<PartitionOffsetAndLag> getConsumerLag(AdminClient adminClient, KafkaConsumer consumer, String groupId) {
+        try {
+            Map<TopicPartition, OffsetAndMetadata> consumerGroupOffsets = adminClient.listConsumerGroupOffsets(groupId)
+                    .partitionsToOffsetAndMetadata()
+                    .get(10, TimeUnit.SECONDS);
 
-        ConsumerGroupDescription consumerGroupDescription = consumerGroups.get(groupId);
-        ConsumerGroupState state = consumerGroupDescription.state();
-
-        Map<TopicPartition, OffsetAndMetadata> offsetAndMetadataMap = adminClient.listConsumerGroupOffsets(groupId)
-                .partitionsToOffsetAndMetadata()
-                .get(10, TimeUnit.SECONDS);
+            Map<TopicPartition, Long> topicEndOffsets = consumer.endOffsets(consumerGroupOffsets.keySet());
+            return consumerGroupOffsets.entrySet()
+                    .stream()
+                    .map(entry -> {
+                        Long endOffset = topicEndOffsets.get(entry.getKey());
+                        long currentOffset = entry.getValue().offset();
+                        return new PartitionOffsetAndLag(entry.getKey().toString(), endOffset, currentOffset);
+                    })
+                    .collect(Collectors.toList());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

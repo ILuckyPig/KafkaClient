@@ -1,7 +1,10 @@
+import com.lu.model.PartitionOffsetAndLag;
 import com.lu.model.Topic;
 import com.lu.util.KafkaUtil;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -54,13 +57,16 @@ public class KafkaUtilTest {
     @Test
     public void testGetConsumers() {
         AdminClient adminClient = KafkaUtil.getAdminClient("192.168.8.50:9092");
-        List<String> consumers = KafkaUtil.getConsumers(adminClient);
+        List<String> consumers = KafkaUtil.getConsumerGroups(adminClient);
         consumers.forEach(System.out::println);
         Assert.assertNotNull(consumers);
     }
 
     @Test
     public void testGetConsumerDescription() throws InterruptedException, ExecutionException, TimeoutException {
-        KafkaUtil.getConsumerDescription(adminClient, "mbase-spider-parser-dev");
+        KafkaConsumer consumer = KafkaUtil.getConsumer("mbase-spider-parser-dev", "192.168.8.50:9092",
+                StringDeserializer.class.getName(), StringDeserializer.class.getName());
+        List<PartitionOffsetAndLag> consumerDescription = KafkaUtil.getConsumerLag(adminClient, consumer, "mbase-spider-parser-dev");
+        consumerDescription.forEach(System.out::println);
     }
 }
