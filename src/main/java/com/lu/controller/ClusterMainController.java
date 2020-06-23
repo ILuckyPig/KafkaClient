@@ -127,6 +127,27 @@ public class ClusterMainController extends RootController {
         }
     }
 
+    // TODO refresh button click event
+    public void clickRefresh(MouseEvent mouseEvent) {
+        if (topicsGridPane.visibleProperty().get()) {
+
+            return;
+        }
+
+        if (consumerListGridPane.visibleProperty().get()) {
+
+            return;
+        }
+
+        consumerGridPaneMap
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().visibleProperty().get())
+                .forEach(entry -> {
+
+                });
+    }
+
     public Label getClusterNameLabel() {
         return clusterNameLabel;
     }
