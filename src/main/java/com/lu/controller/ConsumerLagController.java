@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-public class ConsumerController {
+public class ConsumerLagController {
     @FXML
     TableView<PartitionOffsetAndLag> tableView;
     @FXML

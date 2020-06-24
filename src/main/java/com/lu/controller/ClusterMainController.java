@@ -4,10 +4,13 @@ import com.lu.model.Cluster;
 import com.lu.util.KafkaUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import org.apache.kafka.clients.admin.AdminClient;
 
 import java.io.IOException;
@@ -23,8 +26,8 @@ public class ClusterMainController extends RootController {
     private GridPane topicsGridPane;
     private ConsumerListController consumerListController;
     private GridPane consumerListGridPane;
-    private Map<String, GridPane> consumerGridPaneMap = new HashMap<>();
-    private Map<String, ConsumerController> consumerControllerMap = new HashMap<>();
+    private final Map<String, GridPane> consumerLagGridPaneMap = new HashMap<>();
+    private final Map<String, ConsumerLagController> consumerControllerMap = new HashMap<>();
     private Cluster cluster;
     private AdminClient adminClient;
     private String bootstrapServers;
@@ -46,8 +49,8 @@ public class ClusterMainController extends RootController {
         if (null != consumerListGridPane) {
             consumerListGridPane.setVisible(false);
         }
-        if (!consumerGridPaneMap.isEmpty()) {
-            consumerGridPaneMap.forEach((key, value) -> value.setVisible(false));
+        if (!consumerLagGridPaneMap.isEmpty()) {
+            consumerLagGridPaneMap.forEach((key, value) -> value.setVisible(false));
         }
         if (null == topicsGridPane) {
             try {
@@ -74,8 +77,8 @@ public class ClusterMainController extends RootController {
         if (null != topicsGridPane) {
             topicsGridPane.setVisible(false);
         }
-        if (!consumerGridPaneMap.isEmpty()) {
-            consumerGridPaneMap.forEach((key, value) -> value.setVisible(false));
+        if (!consumerLagGridPaneMap.isEmpty()) {
+            consumerLagGridPaneMap.forEach((key, value) -> value.setVisible(false));
         }
         if (null == consumerListGridPane) {
             try {
@@ -98,7 +101,7 @@ public class ClusterMainController extends RootController {
      *
      * @param mouseEvent
      */
-    public void clickConsumer(MouseEvent mouseEvent) {
+    public void clickConsumerLag(MouseEvent mouseEvent) {
         if (null != topicsGridPane) {
             topicsGridPane.setVisible(false);
         }
@@ -109,19 +112,19 @@ public class ClusterMainController extends RootController {
         String groupId = cell.getText();
         GridPane consumerGridPane;
         try {
-            if (!consumerGridPaneMap.containsKey(groupId)) {
-                FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/ConsumerFxml.fxml"));
+            if (!consumerLagGridPaneMap.containsKey(groupId)) {
+                FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/ConsumerLagFxml.fxml"));
                 consumerGridPane = fxmlLoader.load();
-                ConsumerController consumerController = fxmlLoader.getController();
-                consumerController.setAdminClient(adminClient);
-                consumerController.setBootstrapServer(bootstrapServers);
-                consumerController.setGroupId(groupId);
-                consumerController.init();
+                ConsumerLagController consumerLagController = fxmlLoader.getController();
+                consumerLagController.setAdminClient(adminClient);
+                consumerLagController.setBootstrapServer(bootstrapServers);
+                consumerLagController.setGroupId(groupId);
+                consumerLagController.init();
                 tableGridPane.add(consumerGridPane, 1, 0);
-                consumerGridPaneMap.put(groupId, consumerGridPane);
-                consumerControllerMap.put(groupId, consumerController);
+                consumerLagGridPaneMap.put(groupId, consumerGridPane);
+                consumerControllerMap.put(groupId, consumerLagController);
             } else {
-                consumerGridPane = consumerGridPaneMap.get(groupId);
+                consumerGridPane = consumerLagGridPaneMap.get(groupId);
                 consumerGridPane.setVisible(true);
             }
         } catch (IOException e) {
@@ -145,14 +148,26 @@ public class ClusterMainController extends RootController {
             return;
         }
 
-        consumerGridPaneMap
+        consumerLagGridPaneMap
                 .entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().visibleProperty().get())
                 .forEach(entry -> {
-                    ConsumerController consumerController = consumerControllerMap.get(entry.getKey());
-                    consumerController.refresh();
+                    ConsumerLagController consumerLagController = consumerControllerMap.get(entry.getKey());
+                    consumerLagController.refresh();
                 });
+    }
+
+    public void clickConsumer(MouseEvent mouseEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/ConsumerFxml.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Label getClusterNameLabel() {

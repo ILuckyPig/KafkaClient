@@ -49,7 +49,7 @@ public class ConsumerListController extends RootController {
             cell.setOnMouseClicked(mouseEvent -> {
                 if (!cell.isEmpty()) {
                     ClusterMainController controller = Context.getController(ClusterMainController.class);
-                    controller.clickConsumer(mouseEvent);
+                    controller.clickConsumerLag(mouseEvent);
                 }
             });
             return cell;
