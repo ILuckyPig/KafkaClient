@@ -129,7 +129,11 @@ public class ClusterMainController extends RootController {
         }
     }
 
-    // TODO refresh button click event
+    /**
+     * 刷新topic、consumer、consumer lag界面
+     *
+     * @param mouseEvent
+     */
     public void clickRefresh(MouseEvent mouseEvent) {
         if (null != topicsGridPane && topicsGridPane.visibleProperty().get()) {
             topicsController.refresh();
