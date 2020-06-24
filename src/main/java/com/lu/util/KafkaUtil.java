@@ -107,28 +107,19 @@ public class KafkaUtil {
      * @param groupId
      * @return
      */
-    public static List<PartitionOffsetAndLag> getConsumerLag(AdminClient adminClient, KafkaConsumer consumer, String groupId) {
-        try {
-            Map<TopicPartition, OffsetAndMetadata> consumerGroupOffsets = adminClient.listConsumerGroupOffsets(groupId)
-                    .partitionsToOffsetAndMetadata()
-                    .get(10, TimeUnit.SECONDS);
+    public static List<PartitionOffsetAndLag> getConsumerLag(AdminClient adminClient, KafkaConsumer consumer, String groupId) throws InterruptedException, ExecutionException, TimeoutException {
+        Map<TopicPartition, OffsetAndMetadata> consumerGroupOffsets = adminClient.listConsumerGroupOffsets(groupId)
+                .partitionsToOffsetAndMetadata()
+                .get(10, TimeUnit.SECONDS);
 
-            Map<TopicPartition, Long> topicEndOffsets = consumer.endOffsets(consumerGroupOffsets.keySet());
-            return consumerGroupOffsets.entrySet()
-                    .stream()
-                    .map(entry -> {
-                        Long endOffset = topicEndOffsets.get(entry.getKey());
-                        long currentOffset = entry.getValue().offset();
-                        return new PartitionOffsetAndLag(entry.getKey().toString(), endOffset, currentOffset);
-                    })
-                    .collect(Collectors.toList());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Map<TopicPartition, Long> topicEndOffsets = consumer.endOffsets(consumerGroupOffsets.keySet());
+        return consumerGroupOffsets.entrySet()
+                .stream()
+                .map(entry -> {
+                    Long endOffset = topicEndOffsets.get(entry.getKey());
+                    long currentOffset = entry.getValue().offset();
+                    return new PartitionOffsetAndLag(entry.getKey().toString(), endOffset, currentOffset);
+                })
+                .collect(Collectors.toList());
     }
 }

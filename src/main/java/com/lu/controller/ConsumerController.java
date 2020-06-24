@@ -13,6 +13,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 public class ConsumerController {
     @FXML
@@ -32,8 +34,16 @@ public class ConsumerController {
     public void init() {
         offsetAndLagList = FXCollections.observableArrayList();
         consumer = KafkaUtil.getConsumer(groupId, bootstrapServer, StringDeserializer.class.getName(), StringDeserializer.class.getName());
-        List<PartitionOffsetAndLag> consumerLag = KafkaUtil.getConsumerLag(adminClient, consumer, groupId);
-        buildView(consumerLag);
+        try {
+            List<PartitionOffsetAndLag> consumerLag = KafkaUtil.getConsumerLag(adminClient, consumer, groupId);
+            buildView(consumerLag);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
     }
 
     public void buildView(List<PartitionOffsetAndLag> consumerLag) {
@@ -74,5 +84,19 @@ public class ConsumerController {
 
     public void setBootstrapServer(String bootstrapServer) {
         this.bootstrapServer = bootstrapServer;
+    }
+
+    public void refresh() {
+        try {
+            List<PartitionOffsetAndLag> consumerLag = KafkaUtil.getConsumerLag(adminClient, consumer, groupId);
+            offsetAndLagList.clear();
+            offsetAndLagList.addAll(consumerLag);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
     }
 }

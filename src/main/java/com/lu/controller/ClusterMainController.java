@@ -24,6 +24,7 @@ public class ClusterMainController extends RootController {
     private ConsumerListController consumerListController;
     private GridPane consumerListGridPane;
     private Map<String, GridPane> consumerGridPaneMap = new HashMap<>();
+    private Map<String, ConsumerController> consumerControllerMap = new HashMap<>();
     private Cluster cluster;
     private AdminClient adminClient;
     private String bootstrapServers;
@@ -118,6 +119,7 @@ public class ClusterMainController extends RootController {
                 consumerController.init();
                 tableGridPane.add(consumerGridPane, 1, 0);
                 consumerGridPaneMap.put(groupId, consumerGridPane);
+                consumerControllerMap.put(groupId, consumerController);
             } else {
                 consumerGridPane = consumerGridPaneMap.get(groupId);
                 consumerGridPane.setVisible(true);
@@ -129,12 +131,12 @@ public class ClusterMainController extends RootController {
 
     // TODO refresh button click event
     public void clickRefresh(MouseEvent mouseEvent) {
-        if (topicsGridPane.visibleProperty().get()) {
+        if (null != topicsGridPane && topicsGridPane.visibleProperty().get()) {
             topicsController.refresh();
             return;
         }
 
-        if (consumerListGridPane.visibleProperty().get()) {
+        if (null != consumerListGridPane && consumerListGridPane.visibleProperty().get()) {
             consumerListController.refresh();
             return;
         }
@@ -144,7 +146,8 @@ public class ClusterMainController extends RootController {
                 .stream()
                 .filter(entry -> entry.getValue().visibleProperty().get())
                 .forEach(entry -> {
-
+                    ConsumerController consumerController = consumerControllerMap.get(entry.getKey());
+                    consumerController.refresh();
                 });
     }
 
