@@ -12,6 +12,8 @@ import javafx.scene.control.TableView;
 import org.apache.kafka.clients.admin.AdminClient;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 public class ConsumerListController extends RootController {
     @FXML
@@ -23,8 +25,16 @@ public class ConsumerListController extends RootController {
 
     public void init() {
         consumersList = FXCollections.observableArrayList();
-        List<String> consumers = KafkaUtil.getConsumerGroups(adminClient);
-        buildTableView(consumers);
+        try {
+            List<String> consumers = KafkaUtil.getConsumerGroups(adminClient);
+            buildTableView(consumers);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
     }
 
     public void buildTableView(List<String> consumers) {
@@ -55,5 +65,19 @@ public class ConsumerListController extends RootController {
 
     public void setAdminClient(AdminClient adminClient) {
         this.adminClient = adminClient;
+    }
+
+    public void refresh() {
+        try {
+            List<String> consumers = KafkaUtil.getConsumerGroups(adminClient);
+            consumersList.clear();
+            consumersList.addAll(consumers);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
     }
 }

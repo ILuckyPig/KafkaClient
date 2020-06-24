@@ -135,7 +135,7 @@ public class ClusterMainController extends RootController {
         }
 
         if (consumerListGridPane.visibleProperty().get()) {
-
+            consumerListController.refresh();
             return;
         }
 

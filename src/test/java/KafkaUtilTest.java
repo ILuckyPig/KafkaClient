@@ -55,7 +55,7 @@ public class KafkaUtilTest {
     }
 
     @Test
-    public void testGetConsumers() {
+    public void testGetConsumers() throws InterruptedException, ExecutionException, TimeoutException {
         AdminClient adminClient = KafkaUtil.getAdminClient("192.168.8.50:9092");
         List<String> consumers = KafkaUtil.getConsumerGroups(adminClient);
         consumers.forEach(System.out::println);

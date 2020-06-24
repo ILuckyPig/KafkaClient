@@ -90,22 +90,13 @@ public class KafkaUtil {
      * @param adminClient
      * @return
      */
-    public static List<String> getConsumerGroups(AdminClient adminClient) {
-        try {
-            return adminClient.listConsumerGroups()
-                    .valid()
-                    .get(10, TimeUnit.SECONDS)
-                    .stream()
-                    .map(ConsumerGroupListing::groupId)
-                    .collect(Collectors.toList());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static List<String> getConsumerGroups(AdminClient adminClient) throws InterruptedException, ExecutionException, TimeoutException {
+        return adminClient.listConsumerGroups()
+                .valid()
+                .get(10, TimeUnit.SECONDS)
+                .stream()
+                .map(ConsumerGroupListing::groupId)
+                .collect(Collectors.toList());
     }
 
     /**
