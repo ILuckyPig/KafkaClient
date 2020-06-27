@@ -12,10 +12,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 public class ClusterMainController extends RootController {
     @FXML
@@ -38,6 +42,7 @@ public class ClusterMainController extends RootController {
     public void build() {
         bootstrapServers = String.join(",", cluster.getBootstrapServer());
         adminClient = KafkaUtil.getAdminClient(bootstrapServers);
+        clickTopics(null);
     }
 
     /**
@@ -162,10 +167,21 @@ public class ClusterMainController extends RootController {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/ConsumerFxml.fxml"));
             Parent root = fxmlLoader.load();
+            ConsumerController consumerController = fxmlLoader.getController();
+            Set<String> topics = adminClient.listTopics().names().get();
+            KafkaConsumer consumer = KafkaUtil.getConsumer("kafka-client-" + System.currentTimeMillis(), bootstrapServers,
+                    StringDeserializer.class.getName(), StringDeserializer.class.getName());
+            consumerController.setTopics(topics);
+            consumerController.setConsumer(consumer);
+            consumerController.build();
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
     }

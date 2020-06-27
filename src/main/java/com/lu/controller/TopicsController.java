@@ -29,6 +29,7 @@ public class TopicsController extends RootController {
     private TableColumn<Topic, Integer> consumerColumn;
     private AdminClient adminClient;
     private ObservableList<Topic> topicList;
+    private Set<String> topics;
 
     /**
      * 初始化表格数据
@@ -37,7 +38,7 @@ public class TopicsController extends RootController {
     public void init() {
         topicList = FXCollections.observableArrayList();
         try {
-            Set<String> topics = adminClient.listTopics().names().get();
+            topics = adminClient.listTopics().names().get();
             List<Topic> topicList = KafkaUtil.getTopicRfAndPartitions(adminClient, topics);
             buildTableView(topicList);
         } catch (InterruptedException | ExecutionException e) {
@@ -65,7 +66,7 @@ public class TopicsController extends RootController {
      */
     public void refresh() {
         try {
-            Set<String> topics = adminClient.listTopics().names().get();
+            topics = adminClient.listTopics().names().get();
             List<Topic> topicList = KafkaUtil.getTopicRfAndPartitions(adminClient, topics);
             topicList.clear();
             topicList.addAll(topicList);
@@ -90,5 +91,13 @@ public class TopicsController extends RootController {
 
     public void setTopicList(ObservableList<Topic> topicList) {
         this.topicList = topicList;
+    }
+
+    public Set<String> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(Set<String> topics) {
+        this.topics = topics;
     }
 }
