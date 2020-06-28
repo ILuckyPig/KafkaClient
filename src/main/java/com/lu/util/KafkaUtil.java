@@ -3,11 +3,10 @@ package com.lu.util;
 import com.lu.model.PartitionOffsetAndLag;
 import com.lu.model.Topic;
 import org.apache.kafka.clients.admin.*;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -121,5 +120,23 @@ public class KafkaUtil {
                     return new PartitionOffsetAndLag(entry.getKey().toString(), endOffset, currentOffset);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public static <K, V> void consumerMessage(KafkaConsumer<K, V> consumer, String topic) {
+        consumer.subscribe(Arrays.asList(topic));
+        int size = 100;
+        int i = 0;
+        List<ConsumerRecord<K, V>> buffer = new ArrayList<>(size);
+        while (i < size) {
+            ConsumerRecords<K, V> consumerRecords = consumer.poll(Duration.ofMillis(100));
+            for (ConsumerRecord<K, V> consumerRecord : consumerRecords) {
+                buffer.add(consumerRecord);
+                i++;
+            }
+        }
+
+        for (ConsumerRecord<K, V> consumerRecord : buffer) {
+            System.out.println(consumerRecord);
+        }
     }
 }

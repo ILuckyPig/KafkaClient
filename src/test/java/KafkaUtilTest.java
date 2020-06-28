@@ -3,15 +3,13 @@ import com.lu.model.Topic;
 import com.lu.util.KafkaUtil;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -68,5 +66,20 @@ public class KafkaUtilTest {
                 StringDeserializer.class.getName(), StringDeserializer.class.getName());
         List<PartitionOffsetAndLag> consumerDescription = KafkaUtil.getConsumerLag(adminClient, consumer, "mbase-spider-parser-dev");
         consumerDescription.forEach(System.out::println);
+    }
+
+    @Test
+    public void testConsumerMessage() {
+        Properties properties = new Properties();
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.8.50:9092");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-client");
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 10);
+        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
+
+        KafkaUtil.consumerMessage(consumer, "xhs_user");
     }
 }
