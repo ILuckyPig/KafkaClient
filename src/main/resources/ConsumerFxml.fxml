@@ -25,7 +25,6 @@
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
         <ChoiceBox fx:id="topicChoiceBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
@@ -165,30 +164,11 @@
                     <Insets left="4.0" />
                 </GridPane.margin>
             </Label>
-            <TextArea maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1">
+            <TextField maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1">
                 <GridPane.margin>
                     <Insets right="4.0" />
                 </GridPane.margin>
-            </TextArea>
-        </GridPane>
-        <GridPane GridPane.rowIndex="9">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-            <Label text="Filter" visible="false">
-                <GridPane.margin>
-                    <Insets left="4.0" />
-                </GridPane.margin>
-            </Label>
-            <ChoiceBox maxWidth="1.7976931348623157E308" prefHeight="30.0" visible="false" GridPane.columnIndex="1">
-                <GridPane.margin>
-                    <Insets right="4.0" />
-                </GridPane.margin>
-            </ChoiceBox>
+            </TextField>
         </GridPane>
     </GridPane>
     <GridPane GridPane.columnIndex="1">
