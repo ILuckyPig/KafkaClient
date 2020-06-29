@@ -12,8 +12,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -169,10 +167,8 @@ public class ClusterMainController extends RootController {
             Parent root = fxmlLoader.load();
             ConsumerController consumerController = fxmlLoader.getController();
             Set<String> topics = adminClient.listTopics().names().get();
-            KafkaConsumer consumer = KafkaUtil.getConsumer("kafka-client-" + System.currentTimeMillis(), bootstrapServers,
-                    StringDeserializer.class.getName(), StringDeserializer.class.getName());
             consumerController.setTopics(topics);
-            consumerController.setConsumer(consumer);
+            consumerController.setBootstrapServers(bootstrapServers);
             consumerController.build();
             Stage stage = new Stage();
             stage.setScene(new Scene(root));

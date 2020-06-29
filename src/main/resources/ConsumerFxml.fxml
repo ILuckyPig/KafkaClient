@@ -45,7 +45,7 @@
                     <Insets left="4.0" />
                 </GridPane.margin>
             </Label>
-            <TextField prefHeight="30.0" GridPane.columnIndex="1">
+            <TextField fx:id="partitionTextField" prefHeight="30.0" GridPane.columnIndex="1">
                 <GridPane.margin>
                     <Insets right="4.0" />
                 </GridPane.margin>
@@ -126,7 +126,7 @@
                     <Insets left="4.0" />
                 </GridPane.margin>
             </Label>
-            <TextField maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1">
+            <TextField fx:id="offsetTextField" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1">
                 <GridPane.margin>
                     <Insets right="4.0" />
                 </GridPane.margin>
@@ -145,7 +145,7 @@
                     <Insets left="4.0" />
                 </GridPane.margin>
             </Label>
-            <ChoiceBox fx:id="utilChoiceBox" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1">
+            <ChoiceBox fx:id="untilChoiceBox" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1">
                 <GridPane.margin>
                     <Insets right="4.0" />
                 </GridPane.margin>
@@ -164,7 +164,7 @@
                     <Insets left="4.0" />
                 </GridPane.margin>
             </Label>
-            <TextField maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1">
+            <TextField fx:id="numberTextField" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1">
                 <GridPane.margin>
                     <Insets right="4.0" />
                 </GridPane.margin>

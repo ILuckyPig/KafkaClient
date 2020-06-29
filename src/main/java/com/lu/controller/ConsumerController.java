@@ -4,12 +4,25 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
+import java.time.Duration;
+import java.util.Properties;
 import java.util.Set;
 
 public class ConsumerController {
+    @FXML
+    TextField partitionTextField;
+    @FXML
+    TextField offsetTextField;
+    @FXML
+    TextField numberTextField;
     @FXML
     ChoiceBox<String> topicChoiceBox;
     @FXML
@@ -19,7 +32,7 @@ public class ConsumerController {
     @FXML
     ChoiceBox<String> startChoiceBox;
     @FXML
-    ChoiceBox<String> utilChoiceBox;
+    ChoiceBox<String> untilChoiceBox;
     private ObservableList<String> topicList;
     private ObservableList<String> keyList;
     private ObservableList<String> valueList;
@@ -27,6 +40,7 @@ public class ConsumerController {
     private ObservableList<String> utilList;
     private Set<String> topics;
     private KafkaConsumer consumer;
+    private String bootstrapServers;
 
     public void build() {
         topicList = FXCollections.observableArrayList();
@@ -36,15 +50,15 @@ public class ConsumerController {
         utilList = FXCollections.observableArrayList("forever", "number of messages", "an offset");
         topicList.addAll(topics);
         topicChoiceBox.setItems(topicList);
-        topicChoiceBox.setValue(topicList.get(0));
+        topicChoiceBox.getSelectionModel().selectFirst();
         keyChoiceBox.setItems(keyList);
-        keyChoiceBox.setValue(keyList.get(0));
+        keyChoiceBox.getSelectionModel().selectFirst();
         valueChoiceBox.setItems(valueList);
-        valueChoiceBox.setValue(valueList.get(0));
+        valueChoiceBox.getSelectionModel().selectFirst();
         startChoiceBox.setItems(startList);
-        startChoiceBox.setValue(startList.get(0));
-        utilChoiceBox.setItems(utilList);
-        utilChoiceBox.setValue(utilList.get(0));
+        startChoiceBox.getSelectionModel().selectFirst();
+        untilChoiceBox.setItems(utilList);
+        untilChoiceBox.getSelectionModel().selectFirst();
     }
 
     public Set<String> getTopics() {
@@ -63,7 +77,33 @@ public class ConsumerController {
         this.consumer = consumer;
     }
 
+    public String getBootstrapServers() {
+        return bootstrapServers;
+    }
+
+    public void setBootstrapServers(String bootstrapServers) {
+        this.bootstrapServers = bootstrapServers;
+    }
+
     public void clickStart(MouseEvent mouseEvent) {
-        // TODO consumer data
+        String topic = topicChoiceBox.getSelectionModel().getSelectedItem();
+        int partition = Integer.parseInt(partitionTextField.getText());
+        String key = keyChoiceBox.getSelectionModel().getSelectedItem();
+        String value = valueChoiceBox.getSelectionModel().getSelectedItem();
+        String start = startChoiceBox.getSelectionModel().getSelectedItem();
+        long offset = Long.parseLong(offsetTextField.getText());
+        String until = untilChoiceBox.getSelectionModel().getSelectedItem();
+        int number = Integer.parseInt(numberTextField.getText());
+        Properties properties = new Properties();
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-client");
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
+        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
+        TopicPartition topicPartition = new TopicPartition(topic, partition);
+        kafkaConsumer.seek(topicPartition, offset);
+        ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(100));
     }
 }

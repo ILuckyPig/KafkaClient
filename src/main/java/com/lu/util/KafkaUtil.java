@@ -122,7 +122,7 @@ public class KafkaUtil {
                 .collect(Collectors.toList());
     }
 
-    public static <K, V> void consumerMessage(KafkaConsumer<K, V> consumer, String topic) {
+    public static <K, V> List<ConsumerRecord<K, V>> consumerMessage(KafkaConsumer<K, V> consumer, String topic) {
         consumer.subscribe(Arrays.asList(topic));
         int size = 100;
         int i = 0;
@@ -135,8 +135,6 @@ public class KafkaUtil {
             }
         }
 
-        for (ConsumerRecord<K, V> consumerRecord : buffer) {
-            System.out.println(consumerRecord);
-        }
+        return buffer;
     }
 }
