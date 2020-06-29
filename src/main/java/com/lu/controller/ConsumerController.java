@@ -4,15 +4,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.Set;
 
@@ -33,11 +36,14 @@ public class ConsumerController {
     ChoiceBox<String> startChoiceBox;
     @FXML
     ChoiceBox<String> untilChoiceBox;
+    @FXML
+    ListView<ConsumerRecord> recordListView;
     private ObservableList<String> topicList;
     private ObservableList<String> keyList;
     private ObservableList<String> valueList;
     private ObservableList<String> startList;
     private ObservableList<String> utilList;
+    private ObservableList<ConsumerRecord> recordList = FXCollections.observableArrayList();
     private Set<String> topics;
     private KafkaConsumer consumer;
     private String bootstrapServers;
@@ -102,8 +108,13 @@ public class ConsumerController {
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
+        kafkaConsumer.subscribe(Arrays.asList(topic));
         TopicPartition topicPartition = new TopicPartition(topic, partition);
         kafkaConsumer.seek(topicPartition, offset);
+        // TODO IllegalStateException: No current assignment for partition
         ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(100));
+        for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+            recordList.add(consumerRecord);
+        }
     }
 }
