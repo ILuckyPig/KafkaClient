@@ -15,7 +15,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
@@ -100,6 +100,10 @@ public class ConsumerController {
         long offset = Long.parseLong(offsetTextField.getText());
         String until = untilChoiceBox.getSelectionModel().getSelectedItem();
         int number = Integer.parseInt(numberTextField.getText());
+        consumerMessage(number,topic, partition, offset);
+    }
+
+    public void consumerMessage(int number, String topic, int partition, long offset) {
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-client");
@@ -108,12 +112,13 @@ public class ConsumerController {
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
-        kafkaConsumer.subscribe(Arrays.asList(topic));
         TopicPartition topicPartition = new TopicPartition(topic, partition);
+        kafkaConsumer.assign(Collections.singletonList(topicPartition));
         kafkaConsumer.seek(topicPartition, offset);
-        // TODO IllegalStateException: No current assignment for partition
+        // TODO can't print message
         ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(100));
         for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
+            System.out.println(consumerRecord);
             recordList.add(consumerRecord);
         }
     }
