@@ -1,5 +1,9 @@
 package com.lu.controller;
 
+import com.lu.entity.ConsumerKeyEnum;
+import com.lu.entity.ConsumerStartEnum;
+import com.lu.entity.ConsumerUntilEnum;
+import com.lu.entity.ConsumerValueEnum;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,6 +20,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConsumerController {
     @FXML
@@ -48,10 +53,10 @@ public class ConsumerController {
 
     public void build() {
         topicList = FXCollections.observableArrayList();
-        keyList = FXCollections.observableArrayList("string", "JSON");
-        valueList = FXCollections.observableArrayList("string", "JSON");
-        startList = FXCollections.observableArrayList("latest", "earliest", "an offset");
-        utilList = FXCollections.observableArrayList("forever", "number of messages", "an offset");
+        keyList = FXCollections.observableArrayList(Arrays.stream(ConsumerKeyEnum.values()).map(ConsumerKeyEnum::getKey).collect(Collectors.toList()));
+        valueList = FXCollections.observableArrayList(Arrays.stream(ConsumerValueEnum.values()).map(ConsumerValueEnum::getKey).collect(Collectors.toList()));
+        startList = FXCollections.observableArrayList(Arrays.stream(ConsumerStartEnum.values()).map(ConsumerStartEnum::getKey).collect(Collectors.toList()));
+        utilList = FXCollections.observableArrayList(Arrays.stream(ConsumerUntilEnum.values()).map(ConsumerUntilEnum::getKey).collect(Collectors.toList()));
         topicList.addAll(topics);
         topicChoiceBox.setItems(topicList);
         topicChoiceBox.getSelectionModel().selectFirst();
