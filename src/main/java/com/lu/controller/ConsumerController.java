@@ -15,9 +15,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 public class ConsumerController {
     @FXML
@@ -65,6 +63,7 @@ public class ConsumerController {
         startChoiceBox.getSelectionModel().selectFirst();
         untilChoiceBox.setItems(utilList);
         untilChoiceBox.getSelectionModel().selectFirst();
+        recordListView.setItems(recordList);
     }
 
     public Set<String> getTopics() {
@@ -100,10 +99,12 @@ public class ConsumerController {
         long offset = Long.parseLong(offsetTextField.getText());
         String until = untilChoiceBox.getSelectionModel().getSelectedItem();
         int number = Integer.parseInt(numberTextField.getText());
-        consumerMessage(number,topic, partition, offset);
+        List<ConsumerRecord<String, String>> records = consumerMessage(number, topic, partition, offset);
+        recordList.clear();
+        recordList.addAll(records);
     }
 
-    public void consumerMessage(int number, String topic, int partition, long offset) {
+    public List<ConsumerRecord<String, String>> consumerMessage(int number, String topic, int partition, long offset) {
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-client");
@@ -115,11 +116,9 @@ public class ConsumerController {
         TopicPartition topicPartition = new TopicPartition(topic, partition);
         kafkaConsumer.assign(Collections.singletonList(topicPartition));
         kafkaConsumer.seek(topicPartition, offset);
-        // TODO can't print message
-        ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(100));
-        for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
-            System.out.println(consumerRecord);
-            recordList.add(consumerRecord);
-        }
+        ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(10));
+        List<ConsumerRecord<String, String>> records = new ArrayList<>(consumerRecords.count());
+        consumerRecords.iterator().forEachRemaining(records::add);
+        return records;
     }
 }

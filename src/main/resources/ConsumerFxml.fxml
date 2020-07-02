@@ -185,12 +185,12 @@
                     <Insets right="4.0" />
                 </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="25.0" text="START" onMouseClicked="#clickStart">
+            <Button mnemonicParsing="false" onMouseClicked="#clickStart" prefHeight="25.0" text="START">
                 <HBox.margin>
                     <Insets right="4.0" />
                 </HBox.margin>
             </Button>
         </HBox>
-        <ListView prefHeight="200.0" prefWidth="200.0" />
+        <ListView fx:id="recordListView" prefHeight="200.0" prefWidth="200.0" />
     </GridPane>
 </GridPane>
