@@ -112,6 +112,105 @@ public class ConsumerController {
         recordListView.setItems(recordList);
     }
 
+    public void clickStart(MouseEvent mouseEvent) {
+        String topic = topicChoiceBox.getSelectionModel().getSelectedItem();
+        int partition = Integer.parseInt(partitionTextField.getText());
+        String key = keyChoiceBox.getSelectionModel().getSelectedItem();
+        String value = valueChoiceBox.getSelectionModel().getSelectedItem();
+        ConsumerStartEnum startEnum = ConsumerStartEnum.from(startChoiceBox.getSelectionModel().getSelectedItem());
+        ConsumerUntilEnum untilEnum = ConsumerUntilEnum.from(untilChoiceBox.getSelectionModel().getSelectedItem());
+
+        if (ConsumerStartEnum.OFFSET.equals(startEnum)) {
+            long offset = Long.parseLong(offsetTextField.getText());
+        }
+        if (ConsumerUntilEnum.NUMBER.equals(untilEnum)) {
+            int number = Integer.parseInt(numberTextField.getText());
+        }
+
+        Properties properties = new Properties();
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-client-" + System.currentTimeMillis());
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+        if (ConsumerStartEnum.LATEST.equals(startEnum) && ConsumerUntilEnum.FOREVER.equals(untilEnum)) {
+
+        } else if (ConsumerStartEnum.LATEST.equals(startEnum) && ConsumerUntilEnum.NUMBER.equals(untilEnum)) {
+
+        } else if (ConsumerStartEnum.EARLIEST.equals(startEnum) && ConsumerUntilEnum.FOREVER.equals(untilEnum)) {
+
+        } else if (ConsumerStartEnum.EARLIEST.equals(startEnum) && ConsumerUntilEnum.NUMBER.equals(untilEnum)) {
+
+        } else if (ConsumerStartEnum.OFFSET.equals(startEnum) && ConsumerUntilEnum.FOREVER.equals(untilEnum)) {
+
+        } else if (ConsumerStartEnum.OFFSET.equals(startEnum) && ConsumerUntilEnum.NUMBER.equals(untilEnum)) {
+
+        }
+    }
+    // TODO consumer action mode
+    public void consumerMessage(Properties properties, String topic, int partition, long offset, int number) {
+        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
+        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
+        TopicPartition topicPartition = new TopicPartition(topic, partition);
+        kafkaConsumer.assign(Collections.singletonList(topicPartition));
+        kafkaConsumer.seek(topicPartition, offset);
+        ConsumerRecords<String, String> consumerRecords = consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(10));;
+        List<ConsumerRecord<String, String>> records = new ArrayList<>();
+        consumerRecords.iterator().forEachRemaining(records::add);
+        recordList.clear();
+        recordList.addAll(records);
+    }
+
+    public void consumerMessage(ConsumerStartEnum startEnum, Properties properties, String topic, int partition, int number) {
+        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
+        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
+        TopicPartition topicPartition = new TopicPartition(topic, partition);
+        kafkaConsumer.assign(Collections.singletonList(topicPartition));
+        if (ConsumerStartEnum.LATEST.equals(startEnum)) {
+            kafkaConsumer.seekToEnd(Collections.singletonList(topicPartition));
+        } else {
+            kafkaConsumer.seekToBeginning(Collections.singletonList(topicPartition));
+        }
+        ConsumerRecords<String, String> consumerRecords = consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(10));;
+        List<ConsumerRecord<String, String>> records = new ArrayList<>();
+        consumerRecords.iterator().forEachRemaining(records::add);
+        recordList.clear();
+        recordList.addAll(records);
+    }
+
+    public void consumerMessage(Properties properties, String topic, int partition, long offset) {
+        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 100);
+        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
+        TopicPartition topicPartition = new TopicPartition(topic, partition);
+        kafkaConsumer.assign(Collections.singletonList(topicPartition));
+        kafkaConsumer.seek(topicPartition, offset);
+        alwaysRefreshRecordList(kafkaConsumer);
+    }
+
+    public void consumerMessage(ConsumerStartEnum startEnum, Properties properties, String topic, int partition) {
+        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 100);
+        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
+        TopicPartition topicPartition = new TopicPartition(topic, partition);
+        kafkaConsumer.assign(Collections.singletonList(topicPartition));
+        if (ConsumerStartEnum.LATEST.equals(startEnum)) {
+            kafkaConsumer.seekToEnd(Collections.singletonList(topicPartition));
+        } else {
+            kafkaConsumer.seekToBeginning(Collections.singletonList(topicPartition));
+        }
+        alwaysRefreshRecordList(kafkaConsumer);
+    }
+
+    public void alwaysRefreshRecordList(KafkaConsumer<String, String> kafkaConsumer) {
+        ConsumerRecords<String, String> consumerRecords;
+        List<ConsumerRecord<String, String>> records = new ArrayList<>();
+        while (true) {
+            consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(10));
+            consumerRecords.iterator().forEachRemaining(records::add);
+            recordList.addAll(records);
+            records.clear();
+        }
+    }
+
     public Set<String> getTopics() {
         return topics;
     }
@@ -134,37 +233,5 @@ public class ConsumerController {
 
     public void setBootstrapServers(String bootstrapServers) {
         this.bootstrapServers = bootstrapServers;
-    }
-
-    public void clickStart(MouseEvent mouseEvent) {
-        String topic = topicChoiceBox.getSelectionModel().getSelectedItem();
-        int partition = Integer.parseInt(partitionTextField.getText());
-        String key = keyChoiceBox.getSelectionModel().getSelectedItem();
-        String value = valueChoiceBox.getSelectionModel().getSelectedItem();
-        String start = startChoiceBox.getSelectionModel().getSelectedItem();
-        long offset = Long.parseLong(offsetTextField.getText());
-        String until = untilChoiceBox.getSelectionModel().getSelectedItem();
-        int number = Integer.parseInt(numberTextField.getText());
-        List<ConsumerRecord<String, String>> records = consumerMessage(number, topic, partition, offset);
-        recordList.clear();
-        recordList.addAll(records);
-    }
-
-    public List<ConsumerRecord<String, String>> consumerMessage(int number, String topic, int partition, long offset) {
-        Properties properties = new Properties();
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-client");
-        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
-        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
-        TopicPartition topicPartition = new TopicPartition(topic, partition);
-        kafkaConsumer.assign(Collections.singletonList(topicPartition));
-        kafkaConsumer.seek(topicPartition, offset);
-        ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(10));
-        List<ConsumerRecord<String, String>> records = new ArrayList<>(consumerRecords.count());
-        consumerRecords.iterator().forEachRemaining(records::add);
-        return records;
     }
 }
