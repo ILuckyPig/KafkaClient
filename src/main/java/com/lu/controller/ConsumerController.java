@@ -11,6 +11,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -23,6 +25,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ConsumerController {
+    @FXML
+    GridPane listGridPane;
+    @FXML
+    RowConstraints whichOneRow;
+    @FXML
+    GridPane whichOneGridPane;
+    @FXML
+    RowConstraints manyRow;
+    @FXML
+    GridPane manyGridPane;
     @FXML
     TextField partitionTextField;
     @FXML
@@ -64,10 +76,39 @@ public class ConsumerController {
         keyChoiceBox.getSelectionModel().selectFirst();
         valueChoiceBox.setItems(valueList);
         valueChoiceBox.getSelectionModel().selectFirst();
+
         startChoiceBox.setItems(startList);
         startChoiceBox.getSelectionModel().selectFirst();
+        startChoiceBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldString, newString) -> {
+            if (ConsumerStartEnum.OFFSET.equals(ConsumerStartEnum.from(newString))) {
+                whichOneRow.setMaxHeight(40);
+                whichOneRow.setMinHeight(40);
+                whichOneRow.setPrefHeight(40);
+                whichOneGridPane.setVisible(true);
+            } else {
+                whichOneRow.setMaxHeight(0);
+                whichOneRow.setMinHeight(0);
+                whichOneRow.setPrefHeight(0);
+                whichOneGridPane.setVisible(false);
+            }
+        });
+
         untilChoiceBox.setItems(utilList);
         untilChoiceBox.getSelectionModel().selectFirst();
+        untilChoiceBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldString, newString) -> {
+            if (ConsumerUntilEnum.NUMBER.equals(ConsumerUntilEnum.from(newString))) {
+                manyRow.setMaxHeight(40);
+                manyRow.setMinHeight(40);
+                manyRow.setPrefHeight(40);
+                manyGridPane.setVisible(true);
+            } else {
+                manyRow.setMaxHeight(0);
+                manyRow.setMinHeight(0);
+                manyRow.setPrefHeight(0);
+                manyGridPane.setVisible(false);
+            }
+        });
+
         recordListView.setItems(recordList);
     }
 
