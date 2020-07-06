@@ -171,16 +171,18 @@ public class ConsumerController {
     }
 
     public void consumerMessage(Properties properties, String topic, int partition, long offset) {
-        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 100);
+        int number = 100;
+        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
         TopicPartition topicPartition = new TopicPartition(topic, partition);
         kafkaConsumer.assign(Collections.singletonList(topicPartition));
         kafkaConsumer.seek(topicPartition, offset);
-        alwaysRefreshRecordList(kafkaConsumer);
+        alwaysRefreshRecordList(kafkaConsumer, number);
     }
 
     public void consumerMessage(ConsumerStartEnum startEnum, Properties properties, String topic, int partition) {
-        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 100);
+        int number = 100;
+        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
         TopicPartition topicPartition = new TopicPartition(topic, partition);
         kafkaConsumer.assign(Collections.singletonList(topicPartition));
@@ -189,7 +191,7 @@ public class ConsumerController {
         } else {
             kafkaConsumer.seekToBeginning(Collections.singletonList(topicPartition));
         }
-        alwaysRefreshRecordList(kafkaConsumer);
+        alwaysRefreshRecordList(kafkaConsumer, number);
     }
 
     public void refreshRecordList(KafkaConsumer<String, String> kafkaConsumer) {
@@ -200,14 +202,19 @@ public class ConsumerController {
         recordList.addAll(records);
     }
 
-    public void alwaysRefreshRecordList(KafkaConsumer<String, String> kafkaConsumer) {
+    public void alwaysRefreshRecordList(KafkaConsumer<String, String> kafkaConsumer, int number) {
         ConsumerRecords<String, String> consumerRecords;
         List<ConsumerRecord<String, String>> records = new ArrayList<>();
         while (true) {
             consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(10));
-            consumerRecords.iterator().forEachRemaining(records::add);
-            recordList.addAll(records);
-            records.clear();
+            if (!consumerRecords.isEmpty()) {
+                consumerRecords.iterator().forEachRemaining(records::add);
+                ConsumerRecord<String, String> lastRecord = records.get(records.size() - 1);
+                TopicPartition topicPartition = new TopicPartition(lastRecord.topic(), lastRecord.partition());
+                kafkaConsumer.seek(topicPartition, lastRecord.offset() + number);
+                recordList.addAll(records);
+                records.clear();
+            }
         }
     }
 
