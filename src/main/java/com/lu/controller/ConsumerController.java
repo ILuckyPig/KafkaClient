@@ -22,6 +22,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class ConsumerController {
@@ -112,43 +113,51 @@ public class ConsumerController {
         recordListView.setItems(recordList);
     }
 
-    // TODO async consumer
     public void clickStart(MouseEvent mouseEvent) {
-        String topic = topicChoiceBox.getSelectionModel().getSelectedItem();
-        int partition = Integer.parseInt(partitionTextField.getText());
-        String key = keyChoiceBox.getSelectionModel().getSelectedItem();
-        String value = valueChoiceBox.getSelectionModel().getSelectedItem();
-        ConsumerStartEnum startEnum = ConsumerStartEnum.from(startChoiceBox.getSelectionModel().getSelectedItem());
-        ConsumerUntilEnum untilEnum = ConsumerUntilEnum.from(untilChoiceBox.getSelectionModel().getSelectedItem());
-
-        Properties properties = new Properties();
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-client-" + System.currentTimeMillis());
-        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-
-        if (ConsumerStartEnum.LATEST.equals(startEnum) && ConsumerUntilEnum.FOREVER.equals(untilEnum)) {
-            consumerMessage(startEnum, properties, topic, partition);
-        } else if (ConsumerStartEnum.LATEST.equals(startEnum) && ConsumerUntilEnum.NUMBER.equals(untilEnum)) {
-            int number = Integer.parseInt(numberTextField.getText());
-            consumerMessage(startEnum, properties, topic, partition,  number);
-        } else if (ConsumerStartEnum.EARLIEST.equals(startEnum) && ConsumerUntilEnum.FOREVER.equals(untilEnum)) {
-            consumerMessage(startEnum, properties, topic, partition);
-        } else if (ConsumerStartEnum.EARLIEST.equals(startEnum) && ConsumerUntilEnum.NUMBER.equals(untilEnum)) {
-            int number = Integer.parseInt(numberTextField.getText());
-            consumerMessage(startEnum, properties, topic, partition, number);
-        } else if (ConsumerStartEnum.OFFSET.equals(startEnum) && ConsumerUntilEnum.FOREVER.equals(untilEnum)) {
-            long offset = Long.parseLong(offsetTextField.getText());
-            consumerMessage(properties, topic, partition, offset);
-        } else if (ConsumerStartEnum.OFFSET.equals(startEnum) && ConsumerUntilEnum.NUMBER.equals(untilEnum)) {
-            long offset = Long.parseLong(offsetTextField.getText());
-            int number = Integer.parseInt(numberTextField.getText());
-            consumerMessage(properties, topic, partition, offset, number);
-        }
+        asyncConsume();
     }
 
-    public void consumerMessage(Properties properties, String topic, int partition, long offset, int number) {
+    /**
+     * 异步消费kafka消息
+     */
+    public void asyncConsume() {
+        CompletableFuture.runAsync(() -> {
+            String topic = topicChoiceBox.getSelectionModel().getSelectedItem();
+            int partition = Integer.parseInt(partitionTextField.getText());
+            String key = keyChoiceBox.getSelectionModel().getSelectedItem();
+            String value = valueChoiceBox.getSelectionModel().getSelectedItem();
+            ConsumerStartEnum startEnum = ConsumerStartEnum.from(startChoiceBox.getSelectionModel().getSelectedItem());
+            ConsumerUntilEnum untilEnum = ConsumerUntilEnum.from(untilChoiceBox.getSelectionModel().getSelectedItem());
+
+            Properties properties = new Properties();
+            properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+            properties.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-client-" + System.currentTimeMillis());
+            properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+            properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+            properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+
+            if (ConsumerStartEnum.LATEST.equals(startEnum) && ConsumerUntilEnum.FOREVER.equals(untilEnum)) {
+                consumeMessage(startEnum, properties, topic, partition);
+            } else if (ConsumerStartEnum.LATEST.equals(startEnum) && ConsumerUntilEnum.NUMBER.equals(untilEnum)) {
+                int number = Integer.parseInt(numberTextField.getText());
+                consumeMessage(startEnum, properties, topic, partition, number);
+            } else if (ConsumerStartEnum.EARLIEST.equals(startEnum) && ConsumerUntilEnum.FOREVER.equals(untilEnum)) {
+                consumeMessage(startEnum, properties, topic, partition);
+            } else if (ConsumerStartEnum.EARLIEST.equals(startEnum) && ConsumerUntilEnum.NUMBER.equals(untilEnum)) {
+                int number = Integer.parseInt(numberTextField.getText());
+                consumeMessage(startEnum, properties, topic, partition, number);
+            } else if (ConsumerStartEnum.OFFSET.equals(startEnum) && ConsumerUntilEnum.FOREVER.equals(untilEnum)) {
+                long offset = Long.parseLong(offsetTextField.getText());
+                consumeMessage(properties, topic, partition, offset);
+            } else if (ConsumerStartEnum.OFFSET.equals(startEnum) && ConsumerUntilEnum.NUMBER.equals(untilEnum)) {
+                long offset = Long.parseLong(offsetTextField.getText());
+                int number = Integer.parseInt(numberTextField.getText());
+                consumeMessage(properties, topic, partition, offset, number);
+            }
+        });
+    }
+
+    public void consumeMessage(Properties properties, String topic, int partition, long offset, int number) {
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
         TopicPartition topicPartition = new TopicPartition(topic, partition);
@@ -157,7 +166,7 @@ public class ConsumerController {
         refreshRecordList(kafkaConsumer);
     }
 
-    public void consumerMessage(ConsumerStartEnum startEnum, Properties properties, String topic, int partition, int number) {
+    public void consumeMessage(ConsumerStartEnum startEnum, Properties properties, String topic, int partition, int number) {
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
         TopicPartition topicPartition = new TopicPartition(topic, partition);
@@ -170,7 +179,7 @@ public class ConsumerController {
         refreshRecordList(kafkaConsumer);
     }
 
-    public void consumerMessage(Properties properties, String topic, int partition, long offset) {
+    public void consumeMessage(Properties properties, String topic, int partition, long offset) {
         int number = 100;
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
@@ -180,7 +189,7 @@ public class ConsumerController {
         alwaysRefreshRecordList(kafkaConsumer, number);
     }
 
-    public void consumerMessage(ConsumerStartEnum startEnum, Properties properties, String topic, int partition) {
+    public void consumeMessage(ConsumerStartEnum startEnum, Properties properties, String topic, int partition) {
         int number = 100;
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
@@ -194,6 +203,11 @@ public class ConsumerController {
         alwaysRefreshRecordList(kafkaConsumer, number);
     }
 
+    /**
+     * 刷新消息列表
+     *
+     * @param kafkaConsumer
+     */
     public void refreshRecordList(KafkaConsumer<String, String> kafkaConsumer) {
         ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(10));;
         List<ConsumerRecord<String, String>> records = new ArrayList<>();
@@ -202,6 +216,12 @@ public class ConsumerController {
         recordList.addAll(records);
     }
 
+    /**
+     * 刷新消息列表
+     *
+     * @param kafkaConsumer
+     * @param number
+     */
     public void alwaysRefreshRecordList(KafkaConsumer<String, String> kafkaConsumer, int number) {
         ConsumerRecords<String, String> consumerRecords;
         List<ConsumerRecord<String, String>> records = new ArrayList<>();
