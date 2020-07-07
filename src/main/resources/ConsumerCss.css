@@ -1,0 +1,5 @@
+#record-list .list-cell {
+    -fx-min-height: 100px;
+    -fx-pref-height: 100px;
+    -fx-max-height: 100px;
+}

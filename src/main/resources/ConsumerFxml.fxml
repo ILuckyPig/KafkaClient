@@ -3,7 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lu.controller.ConsumerController">
+<GridPane stylesheets="ConsumerCss.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lu.controller.ConsumerController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="330.0" minWidth="330.0" prefWidth="330.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -191,6 +191,6 @@
                 </HBox.margin>
             </Button>
         </HBox>
-        <ListView fx:id="recordListView" prefHeight="200.0" prefWidth="200.0" />
+        <ListView id="record-list" fx:id="recordListView" prefHeight="200.0" prefWidth="200.0" />
     </GridPane>
 </GridPane>
