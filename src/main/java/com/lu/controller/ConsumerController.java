@@ -7,6 +7,7 @@ import com.lu.entity.ConsumerValueEnum;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -21,6 +22,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -54,6 +56,10 @@ public class ConsumerController {
     ChoiceBox<String> untilChoiceBox;
     @FXML
     ListView<ConsumerRecord> recordListView;
+    @FXML
+    Button startButton;
+    private volatile boolean starting = false;
+
     private ObservableList<String> topicList;
     private ObservableList<String> keyList;
     private ObservableList<String> valueList;
@@ -113,9 +119,20 @@ public class ConsumerController {
         recordListView.setItems(recordList);
     }
 
+    /**
+     * 点击消费
+     *
+     * @param mouseEvent
+     */
     public void clickStart(MouseEvent mouseEvent) {
-
-        asyncConsume();
+        if (starting) {
+            starting = false;
+            startButton.setText("START");
+        } else {
+            startButton.setText("STOP");
+            starting = true;
+            asyncConsume();
+        }
     }
 
     /**
@@ -210,7 +227,7 @@ public class ConsumerController {
      * @param kafkaConsumer
      */
     public void refreshRecordList(KafkaConsumer<String, String> kafkaConsumer) {
-        ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(10));;
+        ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(10));
         List<ConsumerRecord<String, String>> records = new ArrayList<>();
         consumerRecords.iterator().forEachRemaining(records::add);
         recordList.clear();
@@ -226,8 +243,8 @@ public class ConsumerController {
     public void alwaysRefreshRecordList(KafkaConsumer<String, String> kafkaConsumer, int number) {
         ConsumerRecords<String, String> consumerRecords;
         List<ConsumerRecord<String, String>> records = new ArrayList<>();
-        while (true) {
-            consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(10));
+        while (starting) {
+            consumerRecords = kafkaConsumer.poll(Duration.ofMillis(100));
             if (!consumerRecords.isEmpty()) {
                 consumerRecords.iterator().forEachRemaining(records::add);
                 ConsumerRecord<String, String> lastRecord = records.get(records.size() - 1);
@@ -236,6 +253,7 @@ public class ConsumerController {
                 recordList.addAll(records);
                 records.clear();
             }
+            System.out.println(LocalDateTime.now());
         }
     }
 
