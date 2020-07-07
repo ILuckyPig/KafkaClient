@@ -114,6 +114,7 @@ public class ConsumerController {
     }
 
     public void clickStart(MouseEvent mouseEvent) {
+
         asyncConsume();
     }
 
