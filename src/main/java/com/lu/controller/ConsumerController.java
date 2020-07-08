@@ -7,10 +7,7 @@ import com.lu.entity.ConsumerValueEnum;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -116,6 +113,22 @@ public class ConsumerController {
             }
         });
 
+        recordListView.setCellFactory(cell -> new ListCell<>() {
+            @Override
+            protected void updateItem(ConsumerRecord consumerRecord, boolean b) {
+                super.updateItem(consumerRecord, b);
+                if (b || null == consumerRecord) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    setMinWidth(cell.getWidth());
+                    setPrefWidth(cell.getWidth());
+                    setMaxWidth(cell.getWidth());
+                    setWrapText(true);
+                    setText(consumerRecord.toString());
+                }
+            }
+        });
         recordListView.setItems(recordList);
     }
 
@@ -125,14 +138,20 @@ public class ConsumerController {
      * @param mouseEvent
      */
     public void clickStart(MouseEvent mouseEvent) {
-        if (starting) {
-            starting = false;
-            startButton.setText("START");
-        } else {
-            startButton.setText("STOP");
-            starting = true;
+        ConsumerUntilEnum untilEnum = ConsumerUntilEnum.from(untilChoiceBox.getSelectionModel().getSelectedItem());
+        if (ConsumerUntilEnum.NUMBER.equals(untilEnum)) {
             asyncConsume();
+        } else {
+            if (starting) {
+                starting = false;
+                startButton.setText("START");
+            } else {
+                startButton.setText("STOP");
+                starting = true;
+                asyncConsume();
+            }
         }
+
     }
 
     /**

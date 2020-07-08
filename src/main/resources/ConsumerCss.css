@@ -3,3 +3,6 @@
     -fx-pref-height: 100px;
     -fx-max-height: 100px;
 }
+#record-list .list-cell:hover {
+    -fx-background-color: aliceblue;
+}
