@@ -7,10 +7,14 @@ import com.lu.entity.ConsumerValueEnum;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.stage.Stage;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -18,6 +22,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -73,14 +78,26 @@ public class ConsumerController {
         valueList = FXCollections.observableArrayList(Arrays.stream(ConsumerValueEnum.values()).map(ConsumerValueEnum::getKey).collect(Collectors.toList()));
         startList = FXCollections.observableArrayList(Arrays.stream(ConsumerStartEnum.values()).map(ConsumerStartEnum::getKey).collect(Collectors.toList()));
         utilList = FXCollections.observableArrayList(Arrays.stream(ConsumerUntilEnum.values()).map(ConsumerUntilEnum::getKey).collect(Collectors.toList()));
+
         topicList.addAll(topics);
         topicChoiceBox.setItems(topicList);
         topicChoiceBox.getSelectionModel().selectFirst();
+
         keyChoiceBox.setItems(keyList);
         keyChoiceBox.getSelectionModel().selectFirst();
+
         valueChoiceBox.setItems(valueList);
         valueChoiceBox.getSelectionModel().selectFirst();
 
+        initStartChoiceBox();
+        initUntilChoiceBox();
+        initRecordListView();
+    }
+
+    /**
+     * init start choice box
+     */
+    private void initStartChoiceBox() {
         startChoiceBox.setItems(startList);
         startChoiceBox.getSelectionModel().selectFirst();
         startChoiceBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldString, newString) -> {
@@ -96,7 +113,12 @@ public class ConsumerController {
                 whichOneGridPane.setVisible(false);
             }
         });
+    }
 
+    /**
+     * init until choice box
+     */
+    private void initUntilChoiceBox() {
         untilChoiceBox.setItems(utilList);
         untilChoiceBox.getSelectionModel().selectFirst();
         untilChoiceBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldString, newString) -> {
@@ -112,7 +134,12 @@ public class ConsumerController {
                 manyGridPane.setVisible(false);
             }
         });
+    }
 
+    /**
+     * init record list view
+     */
+    private void initRecordListView() {
         recordListView.setCellFactory(cell -> new ListCell<>() {
             @Override
             protected void updateItem(ConsumerRecord consumerRecord, boolean b) {
@@ -129,11 +156,13 @@ public class ConsumerController {
                 }
             }
         });
+
+        recordListView.setOnMouseClicked(this::openMessage);
         recordListView.setItems(recordList);
     }
 
     /**
-     * 点击消费
+     * start button click event
      *
      * @param mouseEvent
      */
@@ -155,7 +184,7 @@ public class ConsumerController {
     }
 
     /**
-     * 异步消费kafka消息
+     * 异async consume message
      */
     public void asyncConsume() {
         CompletableFuture.runAsync(() -> {
@@ -194,6 +223,15 @@ public class ConsumerController {
         });
     }
 
+    /**
+     * consume a number of message from partition an offset
+     *
+     * @param properties
+     * @param topic
+     * @param partition
+     * @param offset
+     * @param number
+     */
     public void consumeMessage(Properties properties, String topic, int partition, long offset, int number) {
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
@@ -203,6 +241,15 @@ public class ConsumerController {
         refreshRecordList(kafkaConsumer);
     }
 
+    /**
+     * consume a number of message from partition beginning or end
+     *
+     * @param startEnum
+     * @param properties
+     * @param topic
+     * @param partition
+     * @param number
+     */
     public void consumeMessage(ConsumerStartEnum startEnum, Properties properties, String topic, int partition, int number) {
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
@@ -216,6 +263,14 @@ public class ConsumerController {
         refreshRecordList(kafkaConsumer);
     }
 
+    /**
+     * consume message from partition an offset
+     *
+     * @param properties
+     * @param topic
+     * @param partition
+     * @param offset
+     */
     public void consumeMessage(Properties properties, String topic, int partition, long offset) {
         int number = 100;
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
@@ -226,6 +281,14 @@ public class ConsumerController {
         alwaysRefreshRecordList(kafkaConsumer, number);
     }
 
+    /**
+     * consume message from partition beginning or end
+     *
+     * @param startEnum
+     * @param properties
+     * @param topic
+     * @param partition
+     */
     public void consumeMessage(ConsumerStartEnum startEnum, Properties properties, String topic, int partition) {
         int number = 100;
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, number);
@@ -273,6 +336,27 @@ public class ConsumerController {
                 records.clear();
             }
             System.out.println(LocalDateTime.now());
+        }
+    }
+
+    /**
+     * open message
+     *
+     * @param mouseEvent
+     */
+    private void openMessage(MouseEvent mouseEvent) {
+        try {
+            ConsumerRecord consumerRecord = recordListView.getSelectionModel().getSelectedItem();
+            FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/MessageFxml.fxml"));
+            Parent root = fxmlLoader.load();
+            MessageController messageController = fxmlLoader.getController();
+            messageController.setConsumerRecord(consumerRecord);
+            messageController.build();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

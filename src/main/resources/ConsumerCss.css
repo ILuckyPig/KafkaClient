@@ -4,5 +4,5 @@
     -fx-max-height: 100px;
 }
 #record-list .list-cell:hover {
-    -fx-background-color: aliceblue;
+    -fx-background-color: lightgrey;
 }
