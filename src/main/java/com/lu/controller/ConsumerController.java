@@ -61,6 +61,7 @@ public class ConsumerController {
     @FXML
     Button startButton;
     private volatile boolean starting = false;
+    String value;
 
     private ObservableList<String> topicList;
     private ObservableList<String> keyList;
@@ -191,7 +192,7 @@ public class ConsumerController {
             String topic = topicChoiceBox.getSelectionModel().getSelectedItem();
             int partition = Integer.parseInt(partitionTextField.getText());
             String key = keyChoiceBox.getSelectionModel().getSelectedItem();
-            String value = valueChoiceBox.getSelectionModel().getSelectedItem();
+            value = valueChoiceBox.getSelectionModel().getSelectedItem();
             ConsumerStartEnum startEnum = ConsumerStartEnum.from(startChoiceBox.getSelectionModel().getSelectedItem());
             ConsumerUntilEnum untilEnum = ConsumerUntilEnum.from(untilChoiceBox.getSelectionModel().getSelectedItem());
 
@@ -351,6 +352,7 @@ public class ConsumerController {
             Parent root = fxmlLoader.load();
             MessageController messageController = fxmlLoader.getController();
             messageController.setConsumerRecord(consumerRecord);
+            messageController.setValue(value);
             messageController.build();
             Stage stage = new Stage();
             stage.setScene(new Scene(root));

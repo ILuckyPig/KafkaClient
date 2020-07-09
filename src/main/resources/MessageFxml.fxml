@@ -17,12 +17,12 @@
                     <RowConstraints maxHeight="48.0" minHeight="48.0" prefHeight="48.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <TextField fx:id="keyTextField" maxHeight="40.0" minHeight="40.0" prefHeight="40.0">
+                <TextField fx:id="keyTextField" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" editable="false">
                     <GridPane.margin>
                         <Insets left="4.0" right="4.0" top="4.0"/>
                     </GridPane.margin>
                 </TextField>
-                <TextArea fx:id="valueTextArea" GridPane.rowIndex="1" wrapText="true">
+                <TextArea fx:id="valueTextArea" GridPane.rowIndex="1" wrapText="true" editable="false">
                     <GridPane.margin>
                         <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
                     </GridPane.margin>

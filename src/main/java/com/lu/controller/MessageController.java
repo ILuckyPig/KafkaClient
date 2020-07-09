@@ -1,5 +1,7 @@
 package com.lu.controller;
 
+import com.lu.entity.ConsumerValueEnum;
+import com.lu.util.JsonUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -11,10 +13,16 @@ public class MessageController {
     private TextField keyTextField;
     @FXML
     private TextArea valueTextArea;
+    private String value;
 
     public void build() {
         keyTextField.setText(consumerRecord.key());
-        valueTextArea.setText(consumerRecord.value());
+        if (ConsumerValueEnum.JSON.equals(ConsumerValueEnum.from(value))) {
+            valueTextArea.setWrapText(false);
+            valueTextArea.setText(JsonUtil.convertString2Json(consumerRecord.value()).toPrettyString());
+        } else {
+            valueTextArea.setText(consumerRecord.value());
+        }
     }
 
 
@@ -24,5 +32,13 @@ public class MessageController {
 
     public void setConsumerRecord(ConsumerRecord<String, String> consumerRecord) {
         this.consumerRecord = consumerRecord;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }
