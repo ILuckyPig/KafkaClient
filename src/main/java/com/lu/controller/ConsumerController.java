@@ -4,6 +4,7 @@ import com.lu.entity.ConsumerKeyEnum;
 import com.lu.entity.ConsumerStartEnum;
 import com.lu.entity.ConsumerUntilEnum;
 import com.lu.entity.ConsumerValueEnum;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,7 +27,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class ConsumerController {
@@ -188,7 +188,7 @@ public class ConsumerController {
      * 异async consume message
      */
     public void asyncConsume() {
-        CompletableFuture.runAsync(() -> {
+        Platform.runLater(() -> {
             String topic = topicChoiceBox.getSelectionModel().getSelectedItem();
             int partition = Integer.parseInt(partitionTextField.getText());
             String key = keyChoiceBox.getSelectionModel().getSelectedItem();
