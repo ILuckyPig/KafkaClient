@@ -12,6 +12,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -54,6 +55,29 @@ public class ConsumerLagController {
         tableView.setItems(offsetAndLagList);
     }
 
+    public void refresh() {
+        try {
+            List<PartitionOffsetAndLag> consumerLag = KafkaUtil.getConsumerLag(adminClient, consumer, groupId);
+            offsetAndLagList.clear();
+            offsetAndLagList.addAll(consumerLag);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 重置offset
+     *
+     * @param mouseEvent
+     */
+    public void changeOffsets(MouseEvent mouseEvent) {
+
+    }
+
     public AdminClient getAdminClient() {
         return adminClient;
     }
@@ -84,19 +108,5 @@ public class ConsumerLagController {
 
     public void setBootstrapServer(String bootstrapServer) {
         this.bootstrapServer = bootstrapServer;
-    }
-
-    public void refresh() {
-        try {
-            List<PartitionOffsetAndLag> consumerLag = KafkaUtil.getConsumerLag(adminClient, consumer, groupId);
-            offsetAndLagList.clear();
-            offsetAndLagList.addAll(consumerLag);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-        }
     }
 }
