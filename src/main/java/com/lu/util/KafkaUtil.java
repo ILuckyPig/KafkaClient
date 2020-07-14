@@ -4,6 +4,7 @@ import com.lu.model.PartitionOffsetAndLag;
 import com.lu.model.Topic;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.TopicPartition;
 
 import java.time.Duration;
@@ -136,5 +137,23 @@ public class KafkaUtil {
         }
 
         return buffer;
+    }
+
+    /**
+     * 判断consumer group是否有存活的consumer
+     *
+     * @param adminClient
+     * @param groupId
+     * @return 有-false; 没有-true
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static boolean consumerAlive(AdminClient adminClient, String groupId) throws ExecutionException, InterruptedException {
+        KafkaFuture<ConsumerGroupDescription> future = adminClient
+                .describeConsumerGroups(Collections.singleton(groupId))
+                .describedGroups()
+                .get(groupId);
+        ConsumerGroupDescription description = future.get();
+        return !description.members().isEmpty();
     }
 }

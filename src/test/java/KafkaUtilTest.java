@@ -82,4 +82,11 @@ public class KafkaUtilTest {
 
         KafkaUtil.consumerMessage(consumer, "xhs_user");
     }
+
+    @Test
+    public void test() throws ExecutionException, InterruptedException {
+        AdminClient adminClient = KafkaUtil.getAdminClient("192.168.8.50:9092");
+        boolean alive = KafkaUtil.consumerAlive(adminClient, "mbase-spider-parser-dev");
+        Assert.assertFalse(alive);
+    }
 }

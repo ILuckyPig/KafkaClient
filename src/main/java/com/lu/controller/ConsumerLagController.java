@@ -5,6 +5,7 @@ import com.lu.util.KafkaUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -26,6 +27,8 @@ public class ConsumerLagController {
     TableColumn<PartitionOffsetAndLag, Long> lagColumn;
     @FXML
     TableColumn<PartitionOffsetAndLag, String> endCurrentColumn;
+    @FXML
+    Button changeOffsetButton;
     private AdminClient adminClient;
     private KafkaConsumer consumer;
     private String groupId;
@@ -37,7 +40,9 @@ public class ConsumerLagController {
         consumer = KafkaUtil.getConsumer(groupId, bootstrapServer, StringDeserializer.class.getName(), StringDeserializer.class.getName());
         try {
             List<PartitionOffsetAndLag> consumerLag = KafkaUtil.getConsumerLag(adminClient, consumer, groupId);
+            boolean alive = KafkaUtil.consumerAlive(adminClient, groupId);
             buildView(consumerLag);
+            changeOffsetButton.setDisable(alive);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -58,8 +63,10 @@ public class ConsumerLagController {
     public void refresh() {
         try {
             List<PartitionOffsetAndLag> consumerLag = KafkaUtil.getConsumerLag(adminClient, consumer, groupId);
+            boolean alive = KafkaUtil.consumerAlive(adminClient, groupId);
             offsetAndLagList.clear();
             offsetAndLagList.addAll(consumerLag);
+            changeOffsetButton.setDisable(alive);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -75,6 +82,14 @@ public class ConsumerLagController {
      * @param mouseEvent
      */
     public void changeOffsets(MouseEvent mouseEvent) {
+        try {
+            boolean alive = KafkaUtil.consumerAlive(adminClient, groupId);
+            changeOffsetButton.setDisable(alive);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
