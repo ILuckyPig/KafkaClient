@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+<GridPane fx:controller="com.lu.controller.ChangeOffsetsController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
           prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
@@ -25,11 +26,15 @@
             <TableColumn prefWidth="137.19998168945312" text="Current Offset"/>
         </columns>
     </TableView>
-    <HBox prefHeight="100.0" prefWidth="200.0">
-        <Label text="Label"/>
-        <ChoiceBox prefWidth="150.0"/>
+    <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+        <Label text="Set Offsets Mode"/>
+        <ChoiceBox fx:id="modeChoiceBox" prefWidth="150.0">
+            <HBox.margin>
+                <Insets left="5.0"/>
+            </HBox.margin>
+        </ChoiceBox>
     </HBox>
-    <HBox prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="2">
+    <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="2">
         <Button mnemonicParsing="false" text="Button"/>
     </HBox>
 </GridPane>
