@@ -1,6 +1,6 @@
-package com.lu.controller;
+package com.lu.application.controller;
 
-import com.lu.Context;
+import com.lu.application.Context;
 
 public class RootController {
     public RootController() {

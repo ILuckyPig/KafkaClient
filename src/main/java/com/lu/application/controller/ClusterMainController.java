@@ -1,7 +1,7 @@
-package com.lu.controller;
+package com.lu.application.controller;
 
-import com.lu.model.Cluster;
-import com.lu.util.KafkaUtil;
+import com.lu.application.model.Cluster;
+import com.lu.application.util.KafkaUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

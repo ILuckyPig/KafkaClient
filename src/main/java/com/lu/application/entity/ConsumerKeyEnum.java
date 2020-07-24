@@ -1,17 +1,17 @@
-package com.lu.entity;
+package com.lu.application.entity;
 
-public enum ConsumerValueEnum {
+public enum ConsumerKeyEnum {
     STRING("string"),
     JSON("JSON");
 
     private String key;
 
-    ConsumerValueEnum(String key) {
+    ConsumerKeyEnum(String key) {
         this.key = key;
     }
 
-    public static ConsumerValueEnum from(String key) {
-        for (ConsumerValueEnum cEnum : ConsumerValueEnum.values()) {
+    public static ConsumerKeyEnum from(String key) {
+        for (ConsumerKeyEnum cEnum : ConsumerKeyEnum.values()) {
             if (cEnum.getKey().equals(key)) {
                 return cEnum;
             }

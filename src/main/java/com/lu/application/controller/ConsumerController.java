@@ -1,9 +1,9 @@
-package com.lu.controller;
+package com.lu.application.controller;
 
-import com.lu.entity.ConsumerKeyEnum;
-import com.lu.entity.ConsumerStartEnum;
-import com.lu.entity.ConsumerUntilEnum;
-import com.lu.entity.ConsumerValueEnum;
+import com.lu.application.entity.ConsumerKeyEnum;
+import com.lu.application.entity.ConsumerStartEnum;
+import com.lu.application.entity.ConsumerUntilEnum;
+import com.lu.application.entity.ConsumerValueEnum;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

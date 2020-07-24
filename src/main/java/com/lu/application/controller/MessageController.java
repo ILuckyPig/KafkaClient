@@ -1,7 +1,7 @@
-package com.lu.controller;
+package com.lu.application.controller;
 
-import com.lu.entity.ConsumerValueEnum;
-import com.lu.util.JsonUtil;
+import com.lu.application.entity.ConsumerValueEnum;
+import com.lu.application.util.JsonUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;

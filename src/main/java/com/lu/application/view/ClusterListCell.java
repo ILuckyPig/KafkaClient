@@ -1,6 +1,6 @@
-package com.lu.view;
+package com.lu.application.view;
 
-import com.lu.model.Cluster;
+import com.lu.application.model.Cluster;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;

@@ -1,6 +1,6 @@
-package com.lu.controller;
+package com.lu.application.controller;
 
-import com.lu.entity.OffsetEnum;
+import com.lu.application.entity.OffsetEnum;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

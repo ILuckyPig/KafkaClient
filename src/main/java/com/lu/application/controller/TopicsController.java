@@ -1,7 +1,7 @@
-package com.lu.controller;
+package com.lu.application.controller;
 
-import com.lu.model.Topic;
-import com.lu.util.KafkaUtil;
+import com.lu.application.model.Topic;
+import com.lu.application.util.KafkaUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

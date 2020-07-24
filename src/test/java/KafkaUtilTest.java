@@ -1,6 +1,6 @@
-import com.lu.model.PartitionOffsetAndLag;
-import com.lu.model.Topic;
-import com.lu.util.KafkaUtil;
+import com.lu.application.model.PartitionOffsetAndLag;
+import com.lu.application.model.Topic;
+import com.lu.application.util.KafkaUtil;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

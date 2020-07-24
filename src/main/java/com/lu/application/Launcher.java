@@ -1,4 +1,4 @@
-package com.lu;
+package com.lu.application;
 
 import javafx.application.Application;
 

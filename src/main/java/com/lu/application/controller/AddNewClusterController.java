@@ -1,9 +1,9 @@
-package com.lu.controller;
+package com.lu.application.controller;
 
-import com.lu.Context;
-import com.lu.model.Cluster;
-import com.lu.util.JsonUtil;
-import com.lu.util.KafkaUtil;
+import com.lu.application.Context;
+import com.lu.application.model.Cluster;
+import com.lu.application.util.JsonUtil;
+import com.lu.application.util.KafkaUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

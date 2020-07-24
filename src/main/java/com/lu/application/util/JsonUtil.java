@@ -1,4 +1,4 @@
-package com.lu.util;
+package com.lu.application.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

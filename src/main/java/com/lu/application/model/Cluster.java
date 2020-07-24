@@ -1,4 +1,4 @@
-package com.lu.model;
+package com.lu.application.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

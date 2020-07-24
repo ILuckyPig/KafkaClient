@@ -1,7 +1,7 @@
-package com.lu.controller;
+package com.lu.application.controller;
 
-import com.lu.Context;
-import com.lu.util.KafkaUtil;
+import com.lu.application.Context;
+import com.lu.application.util.KafkaUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

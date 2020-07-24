@@ -1,4 +1,4 @@
-package com.lu.entity;
+package com.lu.application.entity;
 
 public enum ConsumerUntilEnum {
     FOREVER("forever"),

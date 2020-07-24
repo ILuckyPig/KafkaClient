@@ -1,7 +1,7 @@
-package com.lu.util;
+package com.lu.application.util;
 
-import com.lu.model.PartitionOffsetAndLag;
-import com.lu.model.Topic;
+import com.lu.application.model.PartitionOffsetAndLag;
+import com.lu.application.model.Topic;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.KafkaFuture;

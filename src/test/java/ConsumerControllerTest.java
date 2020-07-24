@@ -1,4 +1,4 @@
-import com.lu.controller.ConsumerController;
+import com.lu.application.controller.ConsumerController;
 import org.junit.Test;
 
 public class ConsumerControllerTest {

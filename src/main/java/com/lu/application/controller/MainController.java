@@ -1,11 +1,11 @@
-package com.lu.controller;
+package com.lu.application.controller;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.lu.model.Cluster;
-import com.lu.util.JsonUtil;
-import com.lu.view.ClusterListCell;
+import com.lu.application.model.Cluster;
+import com.lu.application.util.JsonUtil;
+import com.lu.application.view.ClusterListCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

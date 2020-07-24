@@ -1,4 +1,4 @@
-package com.lu.model;
+package com.lu.application.model;
 
 public class PartitionOffsetAndLag {
     private String partition;

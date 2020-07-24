@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <GridPane hgap="4.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
           prefWidth="600.0" vgap="4.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-          xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lu.controller.AddNewClusterController">
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lu.application.controller.AddNewClusterController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
